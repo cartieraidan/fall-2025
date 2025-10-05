@@ -20,7 +20,8 @@ int main(int argc, char** argv) {
 
     /******************ADD YOUR VARIABLES HERE*************************/
 
-
+    std::int32_t time = 0;
+    std::int32_t context_save_restore_time = 10;
 
     /******************************************************************/
 
@@ -29,7 +30,21 @@ int main(int argc, char** argv) {
         auto [activity, duration_intr] = parse_trace(trace);
 
         /******************ADD YOUR SIMULATION CODE HERE*************************/
+        //std::cout << activity << ", " << duration_intr << std::endl; //this just print out to the terminal
 
+        if ((activity == "SYSCALL") or (activity == "END_IO")) {
+            //execution.append("CPU Command\n");
+            
+            auto [temp_execution, temp_time] = intr_boilerplate(time, duration_intr, context_save_restore_time, vectors);
+
+            time = temp_time;
+            execution.append(temp_execution);
+            
+        } else if (activity == "CPU") {
+         
+            execution.append(std::to_string(time) + ", " + std::to_string(duration_intr) + ", CPU Burst\n");
+            time += duration_intr;
+        }
 
 
         /************************************************************************/
