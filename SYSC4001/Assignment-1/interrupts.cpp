@@ -22,6 +22,9 @@ int main(int argc, char** argv) {
 
     std::int32_t time = 0;
     std::int32_t context_save_restore_time = 10;
+    std::int32_t activity_time = 40;
+    std::int32_t iret_time = 1;
+    std::int32_t switch_mode = 1;
 
     /******************************************************************/
 
@@ -32,16 +35,50 @@ int main(int argc, char** argv) {
         /******************ADD YOUR SIMULATION CODE HERE*************************/
         //std::cout << activity << ", " << duration_intr << std::endl; //this just print out to the terminal
 
-        if ((activity == "SYSCALL") or (activity == "END_IO")) {
-            //execution.append("CPU Command\n");
-            
-            auto [temp_execution, temp_time] = intr_boilerplate(time, duration_intr, context_save_restore_time, vectors);
+        if ((activity == "SYSCALL") || (activity == "END_IO")) {
 
-            time = temp_time;
-            execution.append(temp_execution);
+            if (duration_intr < 0 || duration_intr >= vectors.size() || duration_intr >= delays.size()) {
+                std::cerr << "Invalid device number: " << duration_intr << std::endl;
+                continue;
+            }
+
+           auto [temp_execution, temp_time] = intr_boilerplate(time, duration_intr, context_save_restore_time, vectors);
+           time = temp_time;
+           execution.append(temp_execution);
+
+            if (activity == "SYSCALL") {
+                execution.append(std::to_string(time) + ", " + std::to_string(activity_time) + ", SYSCALL: run the ISR (device driver)\n");
+                time += activity_time;
+
+                execution.append(std::to_string(time) + ", " + std::to_string(activity_time) + ", transfer data from device to memory\n");
+                time += activity_time;
+
             
+
+                int delay_time = delays[duration_intr];
+                //int delay_time = 20;
+                execution.append(std::to_string(time) + ", " + std::to_string(delay_time) + ", check for errors\n");
+                time += delay_time;
+
+            } else if (activity == "END_IO") {
+                execution.append(std::to_string(time) + ", " + std::to_string(activity_time) + ", ENDIO: run the ISR (device driver)\n");
+                time += activity_time;
+
+                int delay_time = delays[duration_intr];
+                //int delay_time = 20;
+                execution.append(std::to_string(time) + ", " + std::to_string(delay_time) + ", check device status\n");
+                time += delay_time;
+
+                execution.append(std::to_string(time) + ", " + std::to_string(iret_time) + ", IRET\n");
+                time += iret_time;
+
+                execution.append(std::to_string(time) + ", " + std::to_string(switch_mode) + ", switch to user mode\n");
+                time += switch_mode;
+            }
+            
+
         } else if (activity == "CPU") {
-         
+
             execution.append(std::to_string(time) + ", " + std::to_string(duration_intr) + ", CPU Burst\n");
             time += duration_intr;
         }
