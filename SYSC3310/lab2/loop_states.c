@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define LOOP_INTERVAL 4000
+#define LOOP_INTERVAL 100000
 
 static int i;
 static bool LEDstate = true;
