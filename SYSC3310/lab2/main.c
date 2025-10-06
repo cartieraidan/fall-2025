@@ -21,6 +21,8 @@ int main() {
 	P1DIR &= (uint8_t)(~((1<<1)|(1<<4)));
 	//set drive pins high
 	P1OUT |= (uint8_t)((1<<1)|(1<<4));
+	//Enable resistor for pull up
+	P1REN |= (uint8_t)((1<<1)|(1<<4));
 	
 	//config P1.0, P2.0, P2.1, P2.2
 	//GPIO function
