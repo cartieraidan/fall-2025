@@ -1,5 +1,6 @@
-#include "my_function.h"
 #include "msp.h"
+#include <stdbool.h>
+#include <stdio.h>
 
 static int i;
 static bool LEDstate = true;
@@ -51,7 +52,7 @@ int main() {
 		while ((P1IN & (uint8_t)(1<<1))&&(P1IN & (uint8_t)(1<<4)))
 		{}
 		//debouncing inputs
-		i = 5000;
+		i = 50000;
 		while (i>0){i--;}
 		
 		if (!(P1IN & (uint8_t)(1<<1))) {
