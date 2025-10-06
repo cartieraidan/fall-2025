@@ -1,5 +1,7 @@
 #include "my_function.h"
 #include "msp.h"
+#include <stdbool.h>
+#include <stdio.h>
 
 #define LOOP_INTERVAL_1 4000
 #define LOOP_INTERVAL_2 10000
