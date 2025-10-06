@@ -2,6 +2,10 @@
 #include "msp.h"
 
 static int i;
+static bool LEDstate = true;
+static uint8_t RGBoverflow = ((1<<0)|(1<<1)|(1<<2)); //00000111
+static uint8_t RGBstate = (0<<0);
+
 //comments
 int main() {
 	
@@ -49,10 +53,29 @@ int main() {
 		while (i>0){i--;}
 		
 		if (!(P1IN & (uint8_t)(1<<1))) {
-			//pin 1 pressed
+			//pin 1 pressed, change LED selected
+
+			//RED true, RGB false
+			if (LEDstate) {
+				LEDstate = false;
+			} else {
+				LEDstate = true;
+			}
 		}
-		else {
+		else if (!(P1IN & (uint8_t)(1<<4))) {
 			//pin 4 pressed
+
+			if (LEDstate) { //RED LED
+				P1OUT ^= (uint8_t)(1<<0);
+			} else { //RGB LED
+				RGBstate++; //increment state by 1
+				RGBstate &= RGBoverflow; //ensure overflow does not affect other pins
+
+				P2OUT &= (uint8_t)(~((1<<0)|(1<<1)|(1<<2))); //resets pins 0, 1, 2 to 0
+				P2OUT |= RGBstate; //setting new state of pins 0, 1, 2
+			}
+			
+
 		}
 		
 	}
