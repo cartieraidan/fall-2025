@@ -1,4 +1,3 @@
-#include "my_function.h"
 #include "msp.h"
 #include <stdbool.h>
 #include <stdio.h>
