@@ -57,7 +57,7 @@ int main() {
 		//while ((P1IN & (uint8_t)(1<<1))&&(P1IN & (uint8_t)(1<<4))) {
 			//continously change states
 		loopCount++;
-		if ((loopCount % 800000 == 0)&&(loopState)) { //%4000 gussing around 4 seconds
+		if ((loopCount % 100000 == 0)&&(loopState)) { //%4000 gussing around 4 seconds
 				
 				loopCount = 0;
 				
