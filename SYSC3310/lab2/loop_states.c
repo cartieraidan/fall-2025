@@ -53,9 +53,7 @@ int main() {
 	//inifite loop
 	while (1) {
 		
-		//while both input pins are high
-		//while ((P1IN & (uint8_t)(1<<1))&&(P1IN & (uint8_t)(1<<4))) {
-			//continously change states
+		
 		loopCount++;
 		if ((loopCount % 100000 == 0)&&(loopState)) { //%4000 gussing around 4 seconds
 				
@@ -72,12 +70,9 @@ int main() {
 				}
 		}
 		
-		//}
-		//debouncing inputs
-		//i = 50000;
-		//while (i>0){i--;}
 		
 		if (!(P1IN & (uint8_t)(1<<1))) {
+			//debouncing
 			i = 50000;
 			while (i>0){i--;}
 			//pin 1 pressed, change LED selected
@@ -86,6 +81,7 @@ int main() {
 			LEDstate = !LEDstate;
 		}
 		else if (!(P1IN & (uint8_t)(1<<4))) {
+			//debouncing
 			i = 50000;
 			while (i>0){i--;}
 			//pin 4 pressed
