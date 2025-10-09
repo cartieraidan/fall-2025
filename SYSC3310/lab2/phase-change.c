@@ -56,14 +56,8 @@ int main() {
 	//inifite loop
 	while (1) {
 		
-		//while both input pins are high
-		//while ((P1IN & (uint8_t)(1<<1))&&(P1IN & (uint8_t)(1<<4)))
-		//{}
-		//debouncing inputs
-		//i = 5000;
-		//while (i>0){i--;}
-		
 		if (!(P1IN & (uint8_t)(1<<1))) {
+			//debouncing 
 			i = 5000;
 			while (i>0){i--;}
 			//pin 1 pressed, change LED selected
@@ -72,11 +66,11 @@ int main() {
 			LEDstate = !LEDstate;
 		}
 		else if (!(P1IN & (uint8_t)(1<<4))) {
+			//debouncing 
 			i = 5000;
 			while (i>0){i--;}
 			//pin 4 pressed
 
-            //might suggest debouncing here if testing does not go well
             //turn on continuous state
 			loopState = !loopState;
 
