@@ -5,7 +5,7 @@
 int main() {
 
     //disable watchdog timer
-    WDT_A->CTL = WDT_A_CTL_PW | WDT_ACTL_HOLD;
+    WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;
 
     //config P1.1 & P1.4
 
