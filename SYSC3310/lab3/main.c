@@ -63,14 +63,14 @@ int main() {
     P1IE |= (uint8_t)((1<<1)|(1<<4));
 
     //set priority
-		NVIC_SetPriority(PORT1_IRQHandler, 2);
+		NVIC_SetPriority(PORT1_IRQn, 2);
 
     //clean any pending interrupt for port 1?
     //NVIC->ICPR |= (uint8_t)(1);
 		//clears automatically so won't need it?
 
     //enable interrupts in NVIC
-    NVIC_EnableIRQ(PORT1_IRQHandler);
+    NVIC_EnableIRQ(PORT1_IRQn);
 
     //enable interrupts globally
     __ASM("CPSIE I");
