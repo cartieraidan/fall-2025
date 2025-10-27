@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "isr.h"
 
+//comment
 int main() {
 
     //disable watchdog timer
@@ -53,7 +54,7 @@ int main() {
     //interrupt config for P1.1 & P1.4
 
     //set interrupt as falling edge
-    P1ES |= (uint8_t)((1<<1)|(1<<4));
+    P1IES |= (uint8_t)((1<<1)|(1<<4));
 
     //clearing flag register
     P1IFG &= (uint8_t)(~((1<<1)|(1<<4)));
@@ -62,13 +63,14 @@ int main() {
     P1IE |= (uint8_t)((1<<1)|(1<<4));
 
     //set priority
-    NVIC_SetPriority(PORT1_IRQn, 2);
+		NVIC_SetPriority(PORT1_IRQHandler, 2);
 
-    //clean any pending interrupt for port 1
-    NVIC_ICR1 |= 0x00000008;
+    //clean any pending interrupt for port 1?
+    //NVIC->ICPR |= (uint8_t)(1);
+		//clears automatically so won't need it?
 
     //enable interrupts in NVIC
-    NVIC_EnableIRQ(PORT1, IRQn);
+    NVIC_EnableIRQ(PORT1_IRQHandler);
 
     //enable interrupts globally
     __ASM("CPSIE I");
