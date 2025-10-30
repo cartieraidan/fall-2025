@@ -1,6 +1,8 @@
 import javax.print.Doc;
 import java.util.ArrayList;
-
+/**
+* !!!!!!!!!!!!!!make the root and element object therefore can add everything to that!!!!!!!!!!!!!!
+*/
 public class Document {
     private String root;
     private ArrayList<Elements> elements;
