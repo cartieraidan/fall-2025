@@ -10,7 +10,7 @@
 static uint8_t RGBoverflow = ((1<<0)|(1<<1)|(1<<2)); //00000111
 static uint8_t RGBstate = (1<<0);
 static int loopCount = 0;
-static int state_zero = 1;
+static int offState = 1;
 extern volatile bool loopLED;
 
 //comment
@@ -119,9 +119,9 @@ int main() {
     				
     		} else if ((loopCount % RGB_INTERVAL == 0)&&(!(LEDstate))) { //for RGB LED
                 loopCount = 0;
-                if (state_zero % 2 == 0) {
+                if (offState % 2 == 0) {
 					P2OUT &= (uint8_t)(~((1<<0)|(1<<1)|(1<<2))); //resets pins 0, 1, 2 to 0
-					state_zero = 1; //reset tracker
+					offState = 1; //reset tracker
 					
 				} else {
 	                RGBstate++; //increment state by 1
@@ -134,7 +134,7 @@ int main() {
 	                P2OUT &= (uint8_t)(~((1<<0)|(1<<1)|(1<<2))); //resets pins 0, 1, 2 to 0
 	                P2OUT |= RGBstate; //setting new state of pins 0, 1, 2
 
-					state_zero++; //increment tracker
+					offState++; //increment tracker
 				}
                 
             }
