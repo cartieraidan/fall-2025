@@ -6,6 +6,7 @@
 static uint8_t RGBoverflow = ((1<<0)|(1<<1)|(1<<2)); //00000111
 static uint8_t RGBstate = (0<<0);
 static int loopCount = 0;
+extern volatile bool loopLED;
 
 //comment
 int main() {
