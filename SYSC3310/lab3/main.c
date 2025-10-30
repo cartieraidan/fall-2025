@@ -83,14 +83,14 @@ int main() {
 
     while (1) {
 		
-		while (loopLED) { //since loopLED static another instance of the interrupt can turn to false breaking loop
+		if (loopLED) { //since loopLED static another instance of the interrupt can turn to false breaking loop
             loopCount++;
     		if ((loopCount % 100000 == 0)&&(LEDstate)) { //for RED LED
     			loopCount = 0;
     		
     			P1OUT ^= (uint8_t)(1<<0);
     				
-    		} else if ((loopCount % 400000 == 0)&&(!(LEDstate)) { //for RGB LED
+    		} else if ((loopCount % 400000 == 0)&&(!(LEDstate))) { //for RGB LED
                 loopCount = 0;
                 
                 RGBstate++; //increment state by 1
