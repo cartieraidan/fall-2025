@@ -8,8 +8,9 @@
 #define DEBOUNCE_VALUE 50000
 
 static uint8_t RGBoverflow = ((1<<0)|(1<<1)|(1<<2)); //00000111
-static uint8_t RGBstate = (0<<0);
+static uint8_t RGBstate = (1<<0);
 static int loopCount = 0;
+static int state_zero = 1;
 extern volatile bool loopLED;
 
 //comment
@@ -118,12 +119,23 @@ int main() {
     				
     		} else if ((loopCount % RGB_INTERVAL == 0)&&(!(LEDstate))) { //for RGB LED
                 loopCount = 0;
-                
-                RGBstate++; //increment state by 1
-                RGBstate &= RGBoverflow; //ensure overflow does not affect other pins
+                if (state_zero % 2 == 0) {
+					P2OUT &= (uint8_t)(~((1<<0)|(1<<1)|(1<<2))); //resets pins 0, 1, 2 to 0
+					state_zero = 1; //reset tracker
+					
+				} else {
+	                RGBstate++; //increment state by 1
+	                RGBstate &= RGBoverflow; //ensure overflow does not affect other pins
 
-                P2OUT &= (uint8_t)(~((1<<0)|(1<<1)|(1<<2))); //resets pins 0, 1, 2 to 0
-                P2OUT |= RGBstate; //setting new state of pins 0, 1, 2
+					if (RGBstate == 0) { //after roll over want to initialize to 1 not 0
+						RGBstate++;
+					}
+	
+	                P2OUT &= (uint8_t)(~((1<<0)|(1<<1)|(1<<2))); //resets pins 0, 1, 2 to 0
+	                P2OUT |= RGBstate; //setting new state of pins 0, 1, 2
+
+					state_zero++; //increment tracker
+				}
                 
             }
             
