@@ -6,6 +6,7 @@
 
 #define RED_INTERVAL 100000
 #define RGB_INTERVAL 400000
+#define DEBOUNCE_VALUE 50000
 
 static uint8_t RGBoverflow = ((1<<0)|(1<<1)|(1<<2)); //00000111
 static uint8_t RGBstate = (0<<0);
@@ -72,8 +73,29 @@ int main() {
     //enable interrupt for pin
     P1IE |= (uint8_t)((1<<1)|(1<<4));
 
+	//timer config
+
+	//set to free-running mode
+	T32CONTROL1 &= (uint32_t)(~(1<<6));
+
+	//enable interrupt
+	T32CONTROL1 |= (uint32_t)(1<<5);
+
+	//set timer to divide by 1
+	T32CONTROL1 &= (uint32_t)(~((1<<3)|(1<<2)));
+
+	//set to 32 bit timer
+	T32CONTROL1 |= (uint32_t)(1<<1);
+
+	//set to one shot
+	T32CONTROL1 |= (uint32_t)(1<<0);
+
+	//set load register
+	T32LOAD1 = (uint32_t)DEBOUNCE_VALUE;
+
     //set priority
-		NVIC_SetPriority(PORT1_IRQn, 2);
+	NVIC_SetPriority(PORT1_IRQn, 2);
+	NVIC_SetPriority(T32_INT1, 2);
 
     //clean any pending interrupt for port 1?
     //NVIC->ICPR |= (uint8_t)(1);
@@ -81,6 +103,7 @@ int main() {
 
     //enable interrupts in NVIC
     NVIC_EnableIRQ(PORT1_IRQn);
+	NVIC_EnableIRQ(T32_INT1);
 
     //enable interrupts globally
     __ASM("CPSIE I");
