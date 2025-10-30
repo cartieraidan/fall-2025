@@ -2,8 +2,8 @@
 #include "isr.h"
 #include <stdbool.h>
 
-static bool LEDstate = true; //default is RED LED = true
-static bool loopLED = false;
+volatile static bool LEDstate = true; //default is RED LED = true
+volatile static bool loopLED = false;
 
 void PORT1_IRQHandler(void) {
     //without debouncing
