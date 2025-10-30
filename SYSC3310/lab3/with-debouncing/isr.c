@@ -4,9 +4,12 @@
 
 volatile static bool LEDstate = true; //default is RED LED = true
 volatile static bool loopLED = false;
+volatile static bool debouced = false;
 
 void PORT1_IRQHandler(void) {
-    //without debouncing
+
+    T32CONTROL1 |= (uint32_t)(1<<7); //enable timer for debounce
+    
     if ((P1IFG & (uint8_t)(1<<1)) != 0) { //toggling LEDs
         P1IFG &= (uint8_t)(~(1<<1)); //clearing flag register
         LEDstate = (LEDstate) ? false : true;
