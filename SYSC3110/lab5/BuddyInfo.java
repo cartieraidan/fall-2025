@@ -13,9 +13,8 @@ public class BuddyInfo {
         this("N/A", "N/A", "N/A");
     }
 
-    public static void main(String[] args) {
-        BuddyInfo obj = new BuddyInfo("Homer", "Donut", "888-888-8888");
-        System.out.println("Hello " + obj.getName());
+    public boolean equals(BuddyInfo buddy) {
+        return (this.getName().equals(buddy.getName())) && ((this.getAddress()).equals(buddy.getAddress()));
     }
 
     public String getName() {
@@ -28,5 +27,10 @@ public class BuddyInfo {
 
     public String getPhoneNumber() {
         return phoneNumber;
+    }
+
+    public static void main(String[] args) {
+        BuddyInfo obj = new BuddyInfo("Homer", "Donut", "888-888-8888");
+        System.out.println("Hello " + obj.getName());
     }
 }
