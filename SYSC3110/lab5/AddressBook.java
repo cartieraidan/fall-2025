@@ -8,5 +8,9 @@ public class AddressBook {
         buddyList = new JList<>();
     }
 
+    public int getSize() {
+        return buddyList.getModel().getSize();
+    }
+
 
 }
