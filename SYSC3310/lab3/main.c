@@ -3,6 +3,9 @@
 #include "isr.h"
 #include <stdbool.h>
 
+#define RED_INTERVAL 100000
+#define RGB_INTERVAL 400000
+
 static uint8_t RGBoverflow = ((1<<0)|(1<<1)|(1<<2)); //00000111
 static uint8_t RGBstate = (0<<0);
 static int loopCount = 0;
@@ -85,12 +88,12 @@ int main() {
 		
 		if (loopLED) { //since loopLED static another instance of the interrupt can turn to false breaking loop
             loopCount++;
-    		if ((loopCount % 100000 == 0)&&(LEDstate)) { //for RED LED
+    		if ((loopCount % RED_INTERVAL == 0)&&(LEDstate)) { //for RED LED
     			loopCount = 0;
     		
     			P1OUT ^= (uint8_t)(1<<0);
     				
-    		} else if ((loopCount % 400000 == 0)&&(!(LEDstate))) { //for RGB LED
+    		} else if ((loopCount % RGB_INTERVAL == 0)&&(!(LEDstate))) { //for RGB LED
                 loopCount = 0;
                 
                 RGBstate++; //increment state by 1
