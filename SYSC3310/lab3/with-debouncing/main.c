@@ -78,9 +78,6 @@ int main() {
 	//ensure timer disabled
 	T32CONTROL1 &= (uint32_t)(~(1<<7));
 
-	//set to free-running mode
-	T32CONTROL1 &= (uint32_t)(~(1<<6));
-
 	//enable interrupt
 	T32CONTROL1 |= (uint32_t)(1<<5);
 
