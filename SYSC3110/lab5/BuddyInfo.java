@@ -29,6 +29,11 @@ public class BuddyInfo {
         return phoneNumber;
     }
 
+    @Override
+    public String toString() {
+        return "Name: " + getName() + " Address: " + getAddress() + " Phone: " + getPhoneNumber();
+    }
+
     public static void main(String[] args) {
         BuddyInfo obj = new BuddyInfo("Homer", "Donut", "888-888-8888");
         System.out.println("Hello " + obj.getName());
