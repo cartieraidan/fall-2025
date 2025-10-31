@@ -9,12 +9,13 @@ public class AddressBookGUI extends JFrame implements ActionListener {
     private JPanel mainPanel;
     private JPanel buddyDisplay;
 
+    private AddressBook addressSelected;
 
     private JMenuBar menuBar;
     private JMenu buddyOps;
     private JMenu AddressBook;
 
-    private ArrayList<JMenu> createdAddress; //need to implement function for when making new address book
+    private ArrayList<AddressBook> createdAddress; //need to implement function for when making new address book
 
     private JMenuItem add;
     private JMenuItem remove;
@@ -55,13 +56,47 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         setVisible(true);
 
         display.addActionListener(this);
+        create.addActionListener(this);
     }
 
     private void displayInfo() {
-        buddyDisplay.setBackground(Color.RED); //test
+        //buddyDisplay.setBackground(Color.RED); //test
+
+        JList<BuddyInfo> list = addressSelected.getBuddyList();
+        JScrollPane scrollPane = new JScrollPane(list);
+
+        buddyDisplay.add(scrollPane);
+
         setContentPane(buddyDisplay);
-        revalidate();  
+        revalidate();
         repaint();
+    }
+
+    private void createAddress() {
+        //needs to prompt
+
+        String name = JOptionPane.showInputDialog("Enter Name: ");
+        if (name != null && !name.trim().isEmpty()) {
+            AddressBook book = new AddressBook(name);
+
+            addressSelected = book;
+            createdAddress.add(book);
+            JMenu address = new JMenu(book.getName());
+            select = new JMenuItem("Select");
+            address.add(select);
+            menuBar.add(address);
+
+            select.addActionListener(this);
+
+            //for testing
+            book.addBuddyInfo("Adina", "123mm", "2265543");
+            book.addBuddyInfo("Afjdj", "12344m", "223345543");
+
+            revalidate();
+            repaint();
+        }
+
+
     }
 
     @Override
@@ -69,6 +104,18 @@ public class AddressBookGUI extends JFrame implements ActionListener {
 
         if (event.getSource() == display) {
             this.displayInfo();
+        } else if (event.getSource() == create) {
+            this.createAddress();
+        } else if (event.getSource() == select) {
+            JMenuItem selected = (JMenuItem) event.getSource();
+            JMenu parent = (JMenu) ((JPopupMenu) selected.getParent()).getInvoker();
+            //System.out.println(parent.getText());
+
+            for (AddressBook book : createdAddress) {
+                if (book.getName().equals(parent.getText())) {
+                    addressSelected = book;
+                }
+            }
         }
     }
 
