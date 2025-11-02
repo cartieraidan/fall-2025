@@ -101,6 +101,10 @@ int main() {
     //NVIC->ICPR |= (uint8_t)(1);
 		//clears automatically so won't need it?
 
+	//might need this (clears pending interrupts)
+	//NVIC_ClearPendingIRQ(PORT1_IRQn);
+	//NVIC_ClearPendingIRQ(T32_INT1);
+
     //enable interrupts in NVIC
     NVIC_EnableIRQ(PORT1_IRQn);
 	NVIC_EnableIRQ(T32_INT1);
