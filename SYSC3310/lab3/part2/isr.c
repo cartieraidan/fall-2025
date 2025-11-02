@@ -5,9 +5,9 @@
 
 #define DEBOUNCE_VALUE 50000
 
-volatile static bool LEDstate = true; //default is RED LED = true //can be put in PORT1 function as a local volatile static
+static volatile bool LEDstate = true; //default is RED LED = true //can be put in PORT1 function as a local volatile static
 volatile bool loopLED = false; //accessed from main.c
-volatile static bool debounced = false; //needs to be global for both interrupt handlers
+static volatile bool debounced = false; //needs to be global for both interrupt handlers
 
 void PORT1_IRQHandler(void) {
     
