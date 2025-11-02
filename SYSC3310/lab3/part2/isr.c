@@ -6,7 +6,7 @@
 #define DEBOUNCE_VALUE 50000
 
 volatile static bool LEDstate = true; //default is RED LED = true
-volatile bool loopLED = false; //feel like this should be static
+volatile bool loopLED = false; 
 volatile static bool debounced = false;
 
 void PORT1_IRQHandler(void) {
