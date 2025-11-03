@@ -12,13 +12,7 @@ volatile bool debounced = false;
 volatile bool servicing = false;
 
 void PORT1_IRQHandler(void) {
-    
-		if (!servicing) {
-			servicing = true;
-			P1IE &= (uint8_t)(~((1<<1)|(1<<4))); //disable interrupt for pin
-			TIMER32_1->CONTROL |= (uint32_t)(1<<7); //enable timer for debounce
-		}
-    
+
     if (debounced) {
         if ((P1IFG & (uint8_t)(1<<1)) != 0) { //toggling LEDs
             P1IFG &= (uint8_t)(~(1<<1)); //clearing flag register
@@ -32,6 +26,12 @@ void PORT1_IRQHandler(void) {
 
         debounced = false; //reset for debouncing
     }
+
+	if (!servicing) {
+			servicing = true;
+			P1IE &= (uint8_t)(~((1<<1)|(1<<4))); //disable interrupt for pin
+			TIMER32_1->CONTROL |= (uint32_t)(1<<7); //enable timer for debounce
+		}
 }
 
 void T32_INT1_IRQHandler(void) {
