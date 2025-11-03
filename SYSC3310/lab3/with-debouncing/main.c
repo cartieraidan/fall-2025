@@ -79,26 +79,26 @@ int main() {
 
 	//for control use TIMER32_CONTROL_ENABLE instead and _MODE _IE _SIZE....
 
-		//ensure timer disabled
-		TIMER32_1->CONTROL &= (uint32_t)(~(1<<7));
+	//ensure timer disabled
+	TIMER32_1->CONTROL &= (uint32_t)(~(1<<7));
 
-		//enable interrupt
-		TIMER32_1->CONTROL |= (uint32_t)(1<<5);
+	//enable interrupt
+	TIMER32_1->CONTROL |= (uint32_t)(1<<5);
 
-		//set timer to divide by 1
-		TIMER32_1->CONTROL &= (uint32_t)(~((1<<3)|(1<<2)));
+	//set timer to divide by 1
+	TIMER32_1->CONTROL &= (uint32_t)(~((1<<3)|(1<<2)));
 
-		//set to 32 bit timer
-		TIMER32_1->CONTROL |= (uint32_t)(1<<1);
+	//set to 32 bit timer
+	TIMER32_1->CONTROL |= (uint32_t)(1<<1);
 
-		//set to one shot
-		TIMER32_1->CONTROL |= (uint32_t)(1<<0);
+	//set to one shot
+	TIMER32_1->CONTROL |= (uint32_t)(1<<0);
 
-		//set load register
-		TIMER32_1->LOAD = (uint32_t)DEBOUNCE_VALUE;
+	//set load register
+	TIMER32_1->LOAD = (uint32_t)DEBOUNCE_VALUE;
     //set priority
-		NVIC_SetPriority(PORT1_IRQn, 2);
-		NVIC_SetPriority(T32_INT1_IRQn, 2);
+	NVIC_SetPriority(PORT1_IRQn, 2);
+	NVIC_SetPriority(T32_INT1_IRQn, 2);
 
     //clean any pending interrupt for port 1?
     //NVIC->ICPR |= (uint8_t)(1);
@@ -106,7 +106,7 @@ int main() {
 
     //enable interrupts in NVIC
     NVIC_EnableIRQ(PORT1_IRQn);
-		NVIC_EnableIRQ(T32_INT1_IRQn);
+	NVIC_EnableIRQ(T32_INT1_IRQn);
 
     //enable interrupts globally
     __ASM("CPSIE I");
