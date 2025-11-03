@@ -4,7 +4,8 @@
 #include "isr.h"
 #include <stdbool.h>
 
-#define DEBOUNCE_VALUE 50000
+//might have been to small
+#define DEBOUNCE_VALUE 3000000 - 1
 
 extern volatile bool LEDstate; //default is RED LED = true
 extern volatile bool loopLED;
@@ -42,7 +43,7 @@ void T32_INT1_IRQHandler(void) {
 
     TIMER32_1->CONTROL = (uint32_t)(1); //clear timer interrupt
 
-    TIMER32_1->LOAD = (uint32_t)DEBOUNCE_VALUE; //reset timer count
+    TIMER32_1->LOAD = (uint32_t)(DEBOUNCE_VALUE); //reset timer count
     
     debounced = true; //finished debouncing
 	servicing = false;
