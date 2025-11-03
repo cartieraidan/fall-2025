@@ -11,7 +11,8 @@ static uint8_t RGBoverflow = ((1<<0)|(1<<1)|(1<<2)); //00000111
 static uint8_t RGBstate = (1<<0);
 static int loopCount = 0;
 static int offState = 1;
-extern volatile bool loopLED;
+volatile bool loopLED = false;
+volatile bool LEDstate = true;
 
 //comment
 int main() {
