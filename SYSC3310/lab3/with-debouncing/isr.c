@@ -36,7 +36,7 @@ void PORT1_IRQHandler(void) {
 
 void T32_INT1_IRQHandler(void) {
 	
-		loopLED = (loopLED) ? false : true;
+	loopLED = (loopLED) ? false : true;
 
     TIMER32_1->CONTROL &= (uint32_t)(~(1<<7)); //disable timer
 
@@ -45,7 +45,7 @@ void T32_INT1_IRQHandler(void) {
     TIMER32_1->LOAD = (uint32_t)DEBOUNCE_VALUE; //reset timer count
     
     debounced = true; //finished debouncing
-		servicing = false;
+	servicing = false;
 
     P1IE |= (uint8_t)((1<<1)|(1<<4)); //re-enable interrupt for pin
    
