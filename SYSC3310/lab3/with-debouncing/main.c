@@ -7,7 +7,8 @@
 
 #define RED_INTERVAL 100000
 #define RGB_INTERVAL 400000
-#define DEBOUNCE_VALUE 50000
+//might have been to small
+#define DEBOUNCE_VALUE 3000000 - 1
 
 static uint8_t RGBoverflow = ((1<<0)|(1<<1)|(1<<2)); //00000111
 static uint8_t RGBstate = (0<<0);
@@ -79,23 +80,16 @@ int main() {
 
 	//for control use TIMER32_CONTROL_ENABLE instead and _MODE _IE _SIZE....
 
-	//ensure timer disabled
-	TIMER32_1->CONTROL &= (uint32_t)(~(1<<7));
-
-	//enable interrupt
-	TIMER32_1->CONTROL |= (uint32_t)(1<<5);
-
-	//set timer to divide by 1
-	TIMER32_1->CONTROL &= (uint32_t)(~((1<<3)|(1<<2)));
-
-	//set to 32 bit timer
-	TIMER32_1->CONTROL |= (uint32_t)(1<<1);
-
-	//set to one shot
-	TIMER32_1->CONTROL |= (uint32_t)(1<<0);
-
 	//set load register
-	TIMER32_1->LOAD = (uint32_t)DEBOUNCE_VALUE;
+	TIMER32_1->LOAD = (uint32_t)(DEBOUNCE_VALUE);
+
+	//disable timer
+	TIMER32_1->CONTROL = ~TIMER32_CONTROL_ENABLE;
+	
+	TIMER32_1->CONTROL = TIMER32_CONTROL_IE      |   // enable interrupt
+                      	TIMER32_CONTROL_SIZE    |   // 32-bit mode
+                      	TIMER32_CONTROL_MODE;       // one-shot mode
+	
     //set priority
 	NVIC_SetPriority(PORT1_IRQn, 2);
 	NVIC_SetPriority(T32_INT1_IRQn, 2);
