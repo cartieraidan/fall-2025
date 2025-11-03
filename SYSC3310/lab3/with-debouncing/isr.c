@@ -38,7 +38,7 @@ void T32_INT1_IRQHandler(void) {
 	
 	loopLED = (loopLED) ? false : true;
 
-    TIMER32_1->CONTROL &= (uint32_t)(~(1<<7)); //disable timer
+    TIMER32_1->CONTROL &= ~TIMER32_CONTROL_ENABLE; //disable timer
 
     TIMER32_1->CONTROL = (uint32_t)(1); //clear timer interrupt
 
