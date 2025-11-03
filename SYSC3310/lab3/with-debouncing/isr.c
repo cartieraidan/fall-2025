@@ -37,13 +37,11 @@ void PORT1_IRQHandler(void) {
 
 void T32_INT1_IRQHandler(void) {
 	
-	loopLED = (loopLED) ? false : true;
+	loopLED = (loopLED) ? false : true; //test for debugging
 
-    TIMER32_1->CONTROL &= ~TIMER32_CONTROL_ENABLE; //disable timer
-
-    TIMER32_1->INTCLR = 0x1; //clear timer interrupt
-
-    TIMER32_1->LOAD = (uint32_t)(DEBOUNCE_VALUE); //reset timer count
+	TIMER32_1->INTCLR = 0x1; //clear timer interrupt
+	TIMER32_1->CONTROL &= ~TIMER32_CONTROL_ENABLE; //disable timer
+	TIMER32_1->LOAD = DEBOUNCE_VALUE; //reset timer count
     
     debounced = true; //finished debouncing
 	servicing = false;
