@@ -76,24 +76,25 @@ int main() {
 
 	//timer config
 
-	//ensure timer disabled
-	T32CONTROL1 &= (uint32_t)(~(1<<7));
+	//for control use TIMER32_CONTROL_ENABLE instead and _MODE _IE _SIZE....
 
-	//enable interrupt
-	T32CONTROL1 |= (uint32_t)(1<<5);
+		//ensure timer disabled
+		TIMER32_1->CONTROL &= (uint32_t)(~(1<<7));
 
-	//set timer to divide by 1
-	T32CONTROL1 &= (uint32_t)(~((1<<3)|(1<<2)));
+		//enable interrupt
+		TIMER32_1->CONTROL |= (uint32_t)(1<<5);
 
-	//set to 32 bit timer
-	T32CONTROL1 |= (uint32_t)(1<<1);
+		//set timer to divide by 1
+		TIMER32_1->CONTROL &= (uint32_t)(~((1<<3)|(1<<2)));
 
-	//set to one shot
-	T32CONTROL1 |= (uint32_t)(1<<0);
+		//set to 32 bit timer
+		TIMER32_1->CONTROL |= (uint32_t)(1<<1);
 
-	//set load register
-	T32LOAD1 = (uint32_t)DEBOUNCE_VALUE;
+		//set to one shot
+		TIMER32_1->CONTROL |= (uint32_t)(1<<0);
 
+		//set load register
+		TIMER32_1->LOAD = (uint32_t)DEBOUNCE_VALUE;
     //set priority
 	NVIC_SetPriority(PORT1_IRQn, 2);
 	NVIC_SetPriority(T32_INT1, 2);
