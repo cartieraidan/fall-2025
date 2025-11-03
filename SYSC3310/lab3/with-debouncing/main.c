@@ -96,9 +96,9 @@ int main() {
 	NVIC_SetPriority(PORT1_IRQn, 2);
 	NVIC_SetPriority(T32_INT1_IRQn, 2);
 
-    //clean any pending interrupt for port 1?
-    //NVIC->ICPR |= (uint8_t)(1);
-		//clears automatically so won't need it?
+    //clear any pending interrupts
+    NVIC_ClearPendingIRQ(PORT1_IRQn);
+	NVIC_ClearPendingIRQ(T32_INT1_IRQn);
 
     //enable interrupts in NVIC
     NVIC_EnableIRQ(PORT1_IRQn);
