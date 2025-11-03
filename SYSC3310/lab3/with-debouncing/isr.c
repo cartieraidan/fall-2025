@@ -30,7 +30,7 @@ void PORT1_IRQHandler(void) {
 	if (!servicing) {
 			servicing = true;
 			P1IE &= (uint8_t)(~((1<<1)|(1<<4))); //disable interrupt for pin
-			TIMER32_1->CONTROL |= (uint32_t)(1<<7); //enable timer for debounce
+			TIMER32_1->CONTROL |= TIMER32_CONTROL_ENABLE; //enable timer for debounce
 		}
 }
 
