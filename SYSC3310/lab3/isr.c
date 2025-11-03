@@ -3,8 +3,8 @@
 #include "isr.h"
 #include <stdbool.h>
 
-extern volatile bool LEDstate = true; //default is RED LED = true
-extern volatile bool loopLED = false;
+extern volatile bool LEDstate; //default is RED LED = true
+extern volatile bool loopLED;
 
 void PORT1_IRQHandler(void) {
     //without debouncing
