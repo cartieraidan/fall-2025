@@ -89,6 +89,8 @@ int main() {
 	TIMER32_1->CONTROL = TIMER32_CONTROL_IE      |   // enable interrupt
                       	TIMER32_CONTROL_SIZE    |   // 32-bit mode
                       	TIMER32_CONTROL_MODE;       // one-shot mode
+
+	TIMER32_1->INTCLR = 0x1; //clear interrupt flag
 	
     //set priority
 	NVIC_SetPriority(PORT1_IRQn, 2);
