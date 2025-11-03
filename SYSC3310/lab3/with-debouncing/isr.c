@@ -1,3 +1,4 @@
+
 #include "msp.h"
 #include <stdint.h>
 #include "isr.h"
@@ -7,13 +8,16 @@
 
 extern volatile bool LEDstate; //default is RED LED = true
 extern volatile bool loopLED;
-volatile static bool debounced = false;
+volatile bool debounced = false;
+volatile bool servicing = false;
 
 void PORT1_IRQHandler(void) {
     
-    P1IE &= (uint8_t)(~((1<<1)|(1<<4))); //disable interrupt for pin
-    
-    T32CONTROL1 |= (uint32_t)(1<<7); //enable timer for debounce
+		if (!servicing) {
+			servicing = true;
+			P1IE &= (uint8_t)(~((1<<1)|(1<<4))); //disable interrupt for pin
+			TIMER32_1->CONTROL |= (uint32_t)(1<<7); //enable timer for debounce
+		}
     
     if (debounced) {
         if ((P1IFG & (uint8_t)(1<<1)) != 0) { //toggling LEDs
@@ -31,14 +35,17 @@ void PORT1_IRQHandler(void) {
 }
 
 void T32_INT1_IRQHandler(void) {
+	
+		loopLED = (loopLED) ? false : true;
 
-    T32CONTROL1 &= (uint32_t)(~(1<<7)); //disable timer
+    TIMER32_1->CONTROL &= (uint32_t)(~(1<<7)); //disable timer
 
-    T32INTCLR1 = (uint32_t)(1); //clear timer interrupt
+    TIMER32_1->CONTROL = (uint32_t)(1); //clear timer interrupt
 
-    T32LOAD1 = (uint32_t)DEBOUNCE_VALUE; //reset timer count
+    TIMER32_1->LOAD = (uint32_t)DEBOUNCE_VALUE; //reset timer count
     
     debounced = true; //finished debouncing
+		servicing = false;
 
     P1IE |= (uint8_t)((1<<1)|(1<<4)); //re-enable interrupt for pin
    
