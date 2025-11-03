@@ -1,4 +1,5 @@
 
+
 #include "msp.h"
 #include <stdint.h>
 #include "isr.h"
@@ -96,8 +97,8 @@ int main() {
 		//set load register
 		TIMER32_1->LOAD = (uint32_t)DEBOUNCE_VALUE;
     //set priority
-	NVIC_SetPriority(PORT1_IRQn, 2);
-	NVIC_SetPriority(T32_INT1, 2);
+		NVIC_SetPriority(PORT1_IRQn, 2);
+		NVIC_SetPriority(T32_INT1_IRQn, 2);
 
     //clean any pending interrupt for port 1?
     //NVIC->ICPR |= (uint8_t)(1);
@@ -105,7 +106,7 @@ int main() {
 
     //enable interrupts in NVIC
     NVIC_EnableIRQ(PORT1_IRQn);
-	NVIC_EnableIRQ(T32_INT1);
+		NVIC_EnableIRQ(T32_INT1_IRQn);
 
     //enable interrupts globally
     __ASM("CPSIE I");
