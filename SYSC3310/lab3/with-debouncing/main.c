@@ -84,7 +84,7 @@ int main() {
 	TIMER32_1->LOAD = (uint32_t)(DEBOUNCE_VALUE);
 
 	//disable timer
-	TIMER32_1->CONTROL = ~TIMER32_CONTROL_ENABLE;
+	TIMER32_1->CONTROL &= ~TIMER32_CONTROL_ENABLE;
 	
 	TIMER32_1->CONTROL = TIMER32_CONTROL_IE      |   // enable interrupt
                       	TIMER32_CONTROL_SIZE    |   // 32-bit mode
