@@ -41,7 +41,7 @@ void T32_INT1_IRQHandler(void) {
 
     TIMER32_1->CONTROL &= ~TIMER32_CONTROL_ENABLE; //disable timer
 
-    TIMER32_1->CONTROL = (uint32_t)(1); //clear timer interrupt
+    TIMER32_1->INTCLR = 0x1; //clear timer interrupt
 
     TIMER32_1->LOAD = (uint32_t)(DEBOUNCE_VALUE); //reset timer count
     
