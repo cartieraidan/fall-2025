@@ -126,11 +126,51 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     }
 
     /**
-     * roundLoop() handles the flags for drawing a card. If flag not set and there are no valid moves
+     * Handles resetting everything needed to restart a new round.
+     */
+    private void restartGame() {
+        if(gameManager.getRoundWinner().getScore() >= 500) {
+            JOptionPane.showMessageDialog(null, "Game Over");
+            System.exit(0);
+        }
+
+        //refresh deck
+        Deck deck = gameManager.getDeck();
+        deck.newDeck();
+
+        //new flags
+        roundOver = false;
+        resetVars();
+
+        //clear player hands
+        for (Player player : gameManager.getPlayers()) {
+            player.clearHand();
+        }
+
+        gameManager.startgame();
+        updateView();
+    }
+
+    /**
+     * Check if there is a winner and starts next round.
+     */
+    public void checkWinner() {
+        if (gameManager.checkEmptyHand()) {
+            gameManager.updatePlayerScore();
+            roundOver = true;
+        }
+
+        if (roundOver) {
+            JOptionPane.showMessageDialog(null, "Game Over " + gameManager.getRoundWinner().getName() + " Won");
+            restartGame();
+        }
+    }
+
+    /**
+     * drawLogic() handles the flags for drawing a card. If flag not set and there are no valid moves
      * draw button enabled. If draw flag set and no valid moves, reset flags and nextTurn()
      */
-    private void roundLoop() {
-        //maybe add check if win game loop in here
+    private void drawLogic() {
 
         //player can't play must draw
         if (!drawCard && (!(gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())))) {
@@ -158,6 +198,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     private void updateCurrentPlayer() {
         String name = gameManager.getCurrentPlayer().getName(); //gets current player name
         view.currentPlayerDisplay(name);
+        view.addUpdateScore(gameManager.getCurrentPlayer().getScore());
     }
 
     /**
@@ -210,7 +251,12 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         resetVars(); //resets variables for method
 
         //offset for handling multiple cards on a fixed JFrame
-        int offset = (playerCards.getPreferredSize().width - 180) / currentPlayerHand.size();
+        int offset = 50;
+        if (currentPlayer.gethand().isEmpty()) { //error out if hand empty
+            checkWinner();
+        } else {
+            offset = (playerCards.getPreferredSize().width - 180) / currentPlayerHand.size();
+        }
 
         //main loop creates buttons and adds to JPanel
         for (int i = 0; i < currentPlayerHand.size(); i++) {
@@ -241,7 +287,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
         }
 
-        roundLoop(); //handles extra game logic after all cards are loaded into game
+        drawLogic(); //handles extra game logic after all cards are loaded into game
 
         //add panel to view
         view.addPanel(playerCards, BorderLayout.SOUTH);
@@ -395,7 +441,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     private void handleHover(JButton buttonCard) {
         if (hoveredButton != buttonCard) { //button not already hovered on
             resetHover(); //set back down previous
-            hoveredButton = buttonCard; 
+            hoveredButton = buttonCard;
 
             JPanel playerCards = getPlayerCards(); //get player panel
             playerCards.setComponentZOrder(buttonCard, 0);
@@ -545,7 +591,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     /**
      * Action listener for the game control buttons like quit, play, draw
      *
-     * @param e the event to be processed
+     * @param event the event to be processed
      */
     @Override
     public void actionPerformed(ActionEvent event) {
