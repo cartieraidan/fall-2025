@@ -18,6 +18,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
     private JButton hoveredButton = null;
     private JButton selectedCard = null;
+    private JButton play;
 
     private boolean gameOver;
     private boolean roundOver;
@@ -57,6 +58,10 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         quit.addActionListener(this);
         panel.add(quit);
 
+        //play
+        play = new JButton("Play");
+        play.addActionListener(this);
+        panel.add(play);
 
         view.repaint();
     }
@@ -75,7 +80,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
     //displays current player name
     private void updateCurrentPlayer() {
-        String name = players.get(gameManager.getCurrentPlayerIndex()).getName();
+        String name = gameManager.getPlayers().get(gameManager.getCurrentPlayerIndex()).getName();
         view.currentPlayerDisplay(name);
     }
 
@@ -87,6 +92,8 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         discard.setFocusPainted(false);
 
         discard = setCardStyle(discard, topCard);
+
+        //System.out.println(topCard.toString());
 
         discard.setBounds(
                 300,
@@ -100,11 +107,16 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     }
 
     private void updatePlayerCards() {
-        Player currentPlayer = players.get(gameManager.getCurrentPlayerIndex());
+        Player currentPlayer = gameManager.getPlayers().get(gameManager.getCurrentPlayerIndex());
         currentPlayerHand = currentPlayer.gethand();
 
         JPanel playerCards = getPlayerCards();
+        playerCards.removeAll(); //clear old components
         prevCardZ.clear(); //reset map for updated hand
+        hoveredButton = null; //reset var
+        selectedCard = null; //reset var
+
+        updateDiscardPile(); //test
 
         int offset = (playerCards.getPreferredSize().width - 180) / currentPlayerHand.size();
 
@@ -203,9 +215,6 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     @Override
     public void mouseClicked(MouseEvent event) {
         JButton buttonCard = (JButton) event.getSource(); //get button source
-        //might not need this
-        int index = (int) buttonCard.getClientProperty("index"); //get the index of button for card in hand
-        Card card = currentPlayerHand.get(index); //get card selected
 
         handleCardPressed(buttonCard);
 
@@ -236,7 +245,22 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
             button.setLocation(button.getX(), button.getY() - 20);
         }
 
+        if (selectedCard != null) {
+            playableCard(selectedCard);
+        }
+
+
         playerCards.repaint();
+    }
+
+    private void playableCard(JButton selectedCard) {
+        Card card = currentPlayerHand.get((int) selectedCard.getClientProperty("index")); //make this a function to call for all others
+        if (gameManager.checkvalidMove(card)) {
+            play.setEnabled(true);
+        } else {
+            play.setEnabled(false);
+        }
+        view.repaint();
     }
 
     @Override
@@ -294,7 +318,11 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         if (hoveredButton != null) {
             JPanel playerCards = getPlayerCards();
             hoveredButton.setLocation(hoveredButton.getX(), hoveredButton.getY() + 10);
-            playerCards.setComponentZOrder(hoveredButton, prevCardZ.get(hoveredButton));
+
+            Integer z = prevCardZ.get(hoveredButton);
+            if (z != null) {
+                playerCards.setComponentZOrder(hoveredButton, z);
+            }
 
             hoveredButton = null;
             playerCards.repaint();
@@ -312,12 +340,31 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         //Controller controller = new Controller();
     }
 
+    private void playCard() {
+        Player current = players.get(gameManager.getCurrentPlayerIndex());
+
+        if (selectedCard == null) {
+            JOptionPane.showMessageDialog(null, "No card selected.");
+        } else {
+            Card card = currentPlayerHand.get((int) selectedCard.getClientProperty("index"));
+            gameManager.playCard(card);
+            currentPlayerHand.remove(card); //remove card played from list, never implemented in game manager?
+        }
+
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton button = (JButton) e.getSource();
 
         if (button.getText().equals("Quit")) {
             System.exit(0);
+        } else if (button.getText().equals("Play")) {
+            playCard();
+            //probably centralize?
+            updatePlayerCards();
+            updateCurrentPlayer();
+            updateDiscardPile();
         }
     }
 }
