@@ -61,14 +61,14 @@ public class UnoView extends JFrame {
            playerCards.add(card);
        }
 
-       
+
         add(playerCards, BorderLayout.SOUTH);
         add(player2, BorderLayout.NORTH);
         add(player3, BorderLayout.WEST);
         add(player4, BorderLayout.EAST);
 
         pack();
-        setVisible(true);
+        //setVisible(true);
     }
 
     private void handleHover(JButton card) {
@@ -87,6 +87,7 @@ public class UnoView extends JFrame {
 
     private void resetHover() {
         if (hoveredCard != null) {
+            //setComponentZOrder() here is where need to reset properly
             hoveredCard.setLocation(hoveredCard.getX(), hoveredCard.getY() + 10);
             hoveredCard = null;
             playerCards.repaint();
@@ -95,5 +96,6 @@ public class UnoView extends JFrame {
 
     void main(String[] args) {
         UnoView unoView = new UnoView();
+        unoView.setVisible(true);
     }
 }
