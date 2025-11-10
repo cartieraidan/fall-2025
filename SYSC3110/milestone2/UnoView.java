@@ -6,9 +6,6 @@ import java.util.ArrayList;
 
 public class UnoView extends JFrame {
 
-
-    private ArrayList<JButton> cards;
-    private JButton hoveredCard = null;
     private JPanel playerCards;
 
     private JPanel player2;
@@ -16,7 +13,6 @@ public class UnoView extends JFrame {
     private JPanel player4;
 
     public UnoView() {
-        cards = new ArrayList<JButton>();
 
         setTitle("Uno");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,40 +39,17 @@ public class UnoView extends JFrame {
         player4.setBackground(Color.YELLOW);
         player4.setPreferredSize(new Dimension(100, 400));
 
-        /*
-       for (int i = 0; i < 10; i++) {
-           JButton card = new JButton("card" + i);
-           card.setBounds(60 * i, 10, 130, 200);
-           card.setFocusPainted(false);
 
-           card.addMouseMotionListener(new MouseAdapter() {
+    }
 
-               @Override
-               public void mouseMoved(MouseEvent event) {
-                   handleHover(card);
+    public void addCenterCard(JButton button) {
+        JPanel center = new JPanel(null);
+        center.add(button);
 
-               }
-           });
+        add(center, BorderLayout.CENTER);
 
-           card.addMouseListener(new MouseAdapter() {
-               @Override
-               public void mouseExited(MouseEvent event) {
-                   resetHover();
-               }
-           });
-
-           cards.add(card);
-           playerCards.add(card);
-       }
-
-
-         */
-
-        //add(playerCards, BorderLayout.SOUTH);
-
-
-
-        //setVisible(true);
+        pack();
+        repaint();
     }
 
     public void addPanel(JPanel panel, String layout) {
@@ -89,29 +62,6 @@ public class UnoView extends JFrame {
 
     public JPanel getPlayerCards() {
         return playerCards;
-    }
-
-    private void handleHover(JButton card) {
-
-
-        if (hoveredCard != card) {
-            resetHover();
-            hoveredCard = card;
-
-            playerCards.setComponentZOrder(card, 0);
-            card.setLocation(card.getX(), card.getY() - 10);
-            playerCards.repaint();
-        }
-
-    }
-
-    private void resetHover() {
-        if (hoveredCard != null) {
-            //setComponentZOrder() here is where need to reset properly
-            hoveredCard.setLocation(hoveredCard.getX(), hoveredCard.getY() + 10);
-            hoveredCard = null;
-            playerCards.repaint();
-        }
     }
 
 
