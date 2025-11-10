@@ -35,6 +35,7 @@ public class Controller implements MouseListener, MouseMotionListener {
         gameManager = new GameManager(players);
         gameManager.startgame();
         updatePlayerCards();
+        updateDiscardPile();
 
         //need to use this topDiscard() to see top of discard for middle
 
@@ -43,6 +44,26 @@ public class Controller implements MouseListener, MouseMotionListener {
 
         view.setVisible(true);
 
+    }
+
+    //updates the top discard pile after every state change
+    private void updateDiscardPile() {
+        Card topCard = gameManager.topDiscard();
+        JButton discard = new JButton();
+        discard.setEnabled(false);
+        discard.setFocusPainted(false);
+
+        discard = setCardStyle(discard, topCard);
+
+        discard.setBounds(
+                300,
+                100,
+                130,
+                200
+        );
+
+
+        view.addCenterCard(discard);
     }
 
     private void updatePlayerCards() {
@@ -56,9 +77,14 @@ public class Controller implements MouseListener, MouseMotionListener {
 
         for (int i = 0; i < currentPlayerHand.size(); i++) {
             //JButton buttonCard = new JButton(String.valueOf(currentPlayerHand.get(i).getValue())); //testing
-            JButton buttonCard = new JButton("ZL" + String.valueOf(i)); //testing z layer
+            JButton buttonCard = new JButton();
 
-            buttonCard.setBounds(((i == 0) ? 50 : 50 + offset * i), 10, 130, 200);
+            buttonCard.setBounds(
+                    (i == 0) ? 50 : 50 + offset * i,
+                    10,
+                    130,
+                    200
+            );
             buttonCard.setFocusPainted(false);
 
             buttonCard.putClientProperty("index", i);
