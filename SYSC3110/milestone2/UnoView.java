@@ -11,6 +11,7 @@ public class UnoView extends JFrame {
 
     private JPanel leftPanel;
     private JPanel rightPanel;
+    private JPanel centerPanel;
 
     private JPanel player2;
     private JPanel player3;
@@ -32,6 +33,10 @@ public class UnoView extends JFrame {
         topPanel = new JPanel(new GridLayout(1, 2));
         topPanel.setBackground(Color.lightGray);
         topPanel.setPreferredSize(new Dimension(800, 200));
+
+        centerPanel = new JPanel(null);
+        centerPanel.setPreferredSize(new Dimension(400, 400));
+        add(centerPanel, BorderLayout.CENTER);
 
         leftPanel = new JPanel();
         rightPanel = new JPanel();
@@ -58,12 +63,9 @@ public class UnoView extends JFrame {
     }
 
     public void addCenterCard(JButton button) {
-        JPanel center = new JPanel(null);
-        center.add(button);
-
-        add(center, BorderLayout.CENTER);
-
-        pack();
+        centerPanel.removeAll();
+        centerPanel.add(button);
+        revalidate();
         repaint();
     }
 
@@ -88,6 +90,7 @@ public class UnoView extends JFrame {
         playerName.setFont(new Font("Arial", Font.BOLD, 14));
         playerName.setForeground(Color.black);
 
+        leftPanel.removeAll(); //clear JLabel
         leftPanel.add(playerName);
 
         repaint();
