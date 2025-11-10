@@ -16,17 +16,17 @@ public class UnoView extends JFrame {
 
         setTitle("Uno");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500, 800);
+        setSize(800, 800);
 
         //only for testing purposes, will separate
         playerCards = new JPanel();
         playerCards.setBackground(Color.RED);
-        playerCards.setPreferredSize(new Dimension(500, 300));
+        playerCards.setPreferredSize(new Dimension(800, 300));
         playerCards.setLayout(null);
 
         JPanel player2 =  new JPanel();
         player2.setBackground(Color.GREEN);
-        player2.setPreferredSize(new Dimension(500, 100));
+        player2.setPreferredSize(new Dimension(800, 100));
 
         JPanel player3 =  new JPanel();
         player3.setBackground(Color.BLUE);
@@ -71,6 +71,10 @@ public class UnoView extends JFrame {
         //setVisible(true);
     }
 
+    public JPanel getPlayerCards() {
+        return playerCards;
+    }
+
     private void handleHover(JButton card) {
 
 
@@ -94,8 +98,5 @@ public class UnoView extends JFrame {
         }
     }
 
-    void main(String[] args) {
-        UnoView unoView = new UnoView();
-        unoView.setVisible(true);
-    }
+
 }
