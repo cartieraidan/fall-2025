@@ -11,6 +11,10 @@ public class UnoView extends JFrame {
     private JButton hoveredCard = null;
     private JPanel playerCards;
 
+    private JPanel player2;
+    private JPanel player3;
+    private JPanel player4;
+
     public UnoView() {
         cards = new ArrayList<JButton>();
 
@@ -18,24 +22,28 @@ public class UnoView extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 800);
 
+
         //only for testing purposes, will separate
         playerCards = new JPanel();
         playerCards.setBackground(Color.RED);
         playerCards.setPreferredSize(new Dimension(800, 300));
         playerCards.setLayout(null);
 
-        JPanel player2 =  new JPanel();
+
+
+        player2 =  new JPanel();
         player2.setBackground(Color.GREEN);
         player2.setPreferredSize(new Dimension(800, 100));
 
-        JPanel player3 =  new JPanel();
+        player3 =  new JPanel();
         player3.setBackground(Color.BLUE);
         player3.setPreferredSize(new Dimension(100, 400));
 
-        JPanel player4 =  new JPanel();
+        player4 =  new JPanel();
         player4.setBackground(Color.YELLOW);
         player4.setPreferredSize(new Dimension(100, 400));
 
+        /*
        for (int i = 0; i < 10; i++) {
            JButton card = new JButton("card" + i);
            card.setBounds(60 * i, 10, 130, 200);
@@ -62,13 +70,21 @@ public class UnoView extends JFrame {
        }
 
 
-        add(playerCards, BorderLayout.SOUTH);
+         */
+
+        //add(playerCards, BorderLayout.SOUTH);
+
+
+
+        //setVisible(true);
+    }
+
+    public void addPanel(JPanel panel, String layout) {
+        add(panel, layout);
         add(player2, BorderLayout.NORTH);
         add(player3, BorderLayout.WEST);
         add(player4, BorderLayout.EAST);
-
         pack();
-        //setVisible(true);
     }
 
     public JPanel getPlayerCards() {
