@@ -7,6 +7,10 @@ import java.util.ArrayList;
 public class UnoView extends JFrame {
 
     private JPanel playerCards;
+    private JPanel topPanel;
+
+    private JPanel leftPanel;
+    private JPanel rightPanel;
 
     private JPanel player2;
     private JPanel player3;
@@ -25,6 +29,17 @@ public class UnoView extends JFrame {
         playerCards.setPreferredSize(new Dimension(800, 300));
         playerCards.setLayout(null);
 
+        topPanel = new JPanel(new GridLayout(1, 2));
+        topPanel.setBackground(Color.lightGray);
+        topPanel.setPreferredSize(new Dimension(800, 200));
+
+        leftPanel = new JPanel();
+        rightPanel = new JPanel();
+
+        topPanel.add(leftPanel);
+        topPanel.add(rightPanel);
+
+        add(topPanel,  BorderLayout.NORTH);
 
 
         player2 =  new JPanel();
@@ -64,16 +79,16 @@ public class UnoView extends JFrame {
         return playerCards;
     }
 
-    public void currentPlayerDisplay(String name) {
-        JPanel display = new JPanel();
-        display.setPreferredSize(new Dimension(800, 100));
+    public JPanel getRightPanel() {
+        return rightPanel;
+    }
 
-        JLabel playerName = new JLabel("Current Player: " + name);
-        playerName.setFont(new Font("Arial", Font.BOLD, 50));
+    public void currentPlayerDisplay(String name) {
+        JLabel playerName = new JLabel("Player: " + name);
+        playerName.setFont(new Font("Arial", Font.BOLD, 14));
         playerName.setForeground(Color.black);
 
-        display.add(playerName);
-        add(display, BorderLayout.NORTH);
+        leftPanel.add(playerName);
 
         repaint();
     }
