@@ -62,7 +62,24 @@ int main() {
 	P1IE |= (uint8_t)((1<<1)|(1<<4));
 	
 	//timer config
+	//set mode off
+	TA0CTL &= (uint8_t)(~((1<<4)|(1<<5)));
 	
+	//set source to TAxCLK
+	TA0CTL &= (uint8_t)(~((1<<8)|(1<<9)));
+	
+	//enable interrupt
+	TA0CTL |= (uint8_t)(1<<1);
+	
+	//clear TAIFG
+	TA0CTL &= (uint8_t)(~(1<<0));
+	
+	//setting divider to /2
+	TA0CTL &= (uint8_t)(~((1<<6)|(1<<7)));
+	TA0CTL |= (uint8_t)((1<<6)|(1<<7));
+	
+	//set limit for timer
+	TA0CCR0 = 40000;
 	
 	//set priority
 	NVIC_SetPriority(TA0_0_IRQn, 2);
