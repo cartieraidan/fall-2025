@@ -50,23 +50,18 @@ public class UnoView extends JFrame {
                }
            });
 
+           card.addMouseListener(new MouseAdapter() {
+               @Override
+               public void mouseExited(MouseEvent event) {
+                   resetHover();
+               }
+           });
+
            cards.add(card);
            playerCards.add(card);
        }
 
-
-
-       playerCards.addMouseListener(new MouseAdapter() {
-           @Override
-           public void mouseExited(MouseEvent event) {
-               resetHover();
-           }
-       });
-
-
-
-
-
+       
         add(playerCards, BorderLayout.SOUTH);
         add(player2, BorderLayout.NORTH);
         add(player3, BorderLayout.WEST);
@@ -77,31 +72,17 @@ public class UnoView extends JFrame {
     }
 
     private void handleHover(JButton card) {
-        JButton closest = null;
 
-        for (JButton card : cards) {
-            Rectangle cardBounds = card.getBounds();
 
-            //System.out.println("Actual X=" + x + ", Y=" + (cardBounds.getY() + (double) cardBounds.height / 2));
-            //System.out.println(cardBounds.y + " height " + cardBounds.height);
-            System.out.println("mouse x position " + x);
-            //if (cardBounds.contains(x, y)) {
-            if (x >= cardBounds.x && x <= cardBounds.x + cardBounds.width) {
-                closest = card;
-                break;
-            }
-        }
-
-        if (closest != hoveredCard) {
+        if (hoveredCard != card) {
             resetHover();
-            hoveredCard = closest;
+            hoveredCard = card;
 
-            if (hoveredCard != null) {
-                playerCards.setComponentZOrder(hoveredCard, 0);
-                hoveredCard.setLocation(hoveredCard.getX(), hoveredCard.getY() - 10);
-                playerCards.repaint();
-            }
+            playerCards.setComponentZOrder(card, 0);
+            card.setLocation(card.getX(), card.getY() - 10);
+            playerCards.repaint();
         }
+
     }
 
     private void resetHover() {
