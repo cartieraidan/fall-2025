@@ -1,15 +1,22 @@
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Controller {
+public class Controller implements MouseListener, MouseMotionListener {
 
     private Map<JButton, Integer> prevCardZ;
     private UnoView view;
     private int playerCount;
     private ArrayList<Player> players;
     private GameManager gameManager;
+    private List<Card> currentPlayerHand;
+
+    private JButton hoveredButton = null;
 
     private boolean gameOver;
     private boolean roundOver;
@@ -37,20 +44,28 @@ public class Controller {
 
     private void updatePlayerCards() {
         Player currentPlayer = players.get(gameManager.getCurrentPlayerIndex());
-        List<Card> currentPlayerHand = currentPlayer.gethand();
+        currentPlayerHand = currentPlayer.gethand();
 
-        JPanel playerCards = view.getPlayerCards();
-       
-        int offset = (playerCards.getWidth() - 180) / currentPlayerHand.size();
+        JPanel playerCards = getPlayerCards();
 
-        for (int i = 0; i < players.size(); i++) {
+        int offset = (playerCards.getPreferredSize().width - 180) / currentPlayerHand.size();
+        
+        for (int i = 0; i < currentPlayerHand.size(); i++) {
             JButton buttonCard = new JButton(String.valueOf(currentPlayerHand.get(i).getValue())); //testing
-
-
-
-            buttonCard.setBounds(((i == 1) ? 50 : 50 + offset * i), 10, 130, 200);
+            
+            buttonCard.setBounds(((i == 0) ? 50 : 50 + offset * i), 10, 130, 200);
             buttonCard.setFocusPainted(false);
+
+            buttonCard.putClientProperty("index", i);
+            buttonCard.addMouseMotionListener(this);
+            buttonCard.addMouseListener(this);
+
+            playerCards.add(buttonCard);
         }
+
+        //add panel to view
+        view.addPanel(playerCards, BorderLayout.SOUTH);
+        view.repaint(); //just in case missed something
     }
 
     //add player to list and initializes their name
@@ -76,5 +91,75 @@ public class Controller {
         //UnoView unoView = new UnoView();
         //unoView.setVisible(true);
         //Controller controller = new Controller();
+    }
+
+    //implement this method for when a card is pressed
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        resetHover();
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent event) {
+        //get current card hovering over
+        //!!!!!!might only need this for selecting the card lol
+        JButton buttonCard = (JButton) event.getSource();
+        int index = (int) buttonCard.getClientProperty("index");
+        Card card = currentPlayerHand.get(index);
+
+        handleHover(buttonCard);
+    }
+
+    //makes card hover when mouse over it
+    private void handleHover(JButton buttonCard) {
+        if (hoveredButton != buttonCard) {
+            resetHover();
+            hoveredButton = buttonCard;
+
+            JPanel playerCards = getPlayerCards(); //get player panel
+            playerCards.setComponentZOrder(buttonCard, 0);
+            buttonCard.setLocation(buttonCard.getX(), buttonCard.getY() - 10);
+            playerCards.repaint();
+        }
+    }
+
+    //makes card not hover
+    private void resetHover() {
+        if (hoveredButton != null) {
+            JPanel playerCards = getPlayerCards();
+            hoveredButton.setLocation(hoveredButton.getX(), hoveredButton.getY() + 10);
+            hoveredButton = null;
+            playerCards.repaint();
+        }
+    }
+
+    //returns panel
+    private JPanel getPlayerCards() {
+        return view.getPlayerCards();
     }
 }
