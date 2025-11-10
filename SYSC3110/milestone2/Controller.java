@@ -1,15 +1,13 @@
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Controller implements MouseListener, MouseMotionListener {
+public class Controller implements MouseListener, MouseMotionListener, ActionListener {
 
     private Map<JButton, Integer> prevCardZ; //used for tracking button prev z
     private UnoView view;
@@ -39,18 +37,39 @@ public class Controller implements MouseListener, MouseMotionListener {
         updateDiscardPile(); //updates discard pile
         updateCurrentPlayer();
 
+        initializeControls();
+
         view.setVisible(true);
-        
+
         gameOver = false;
         roundOver = false;
-        
+
+
         gameLoop();
 
     }
 
+    private void initializeControls() {
+        JPanel panel = view.getRightPanel();
+
+        //quit
+        JButton quit = new JButton("Quit");
+        quit.addActionListener(this);
+        panel.add(quit);
+
+
+        view.repaint();
+    }
+
     private void gameLoop() {
         while (!gameOver) {
-            
+            roundLoop();
+        }
+    }
+
+    private void roundLoop() {
+        while (!roundOver) {
+
         }
     }
 
@@ -291,5 +310,14 @@ public class Controller implements MouseListener, MouseMotionListener {
         //UnoView unoView = new UnoView();
         //unoView.setVisible(true);
         //Controller controller = new Controller();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton button = (JButton) e.getSource();
+
+        if (button.getText().equals("Quit")) {
+            System.exit(0);
+        }
     }
 }
