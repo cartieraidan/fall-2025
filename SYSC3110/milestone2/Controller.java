@@ -1,15 +1,17 @@
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Controller implements MouseListener, MouseMotionListener {
 
-    private Map<JButton, Integer> prevCardZ;
+    private Map<JButton, Integer> prevCardZ; //used for tracking button prev z
     private UnoView view;
     private int playerCount;
     private ArrayList<Player> players;
@@ -24,6 +26,7 @@ public class Controller implements MouseListener, MouseMotionListener {
     public Controller() {
         view = new UnoView();
         players = new ArrayList<>();
+        prevCardZ = new HashMap<>();
 
         getNumberPlayers();
         getPlayerNames();
@@ -47,12 +50,14 @@ public class Controller implements MouseListener, MouseMotionListener {
         currentPlayerHand = currentPlayer.gethand();
 
         JPanel playerCards = getPlayerCards();
+        prevCardZ.clear(); //reset map for updated hand
 
         int offset = (playerCards.getPreferredSize().width - 180) / currentPlayerHand.size();
-        
+
         for (int i = 0; i < currentPlayerHand.size(); i++) {
-            JButton buttonCard = new JButton(String.valueOf(currentPlayerHand.get(i).getValue())); //testing
-            
+            //JButton buttonCard = new JButton(String.valueOf(currentPlayerHand.get(i).getValue())); //testing
+            JButton buttonCard = new JButton("ZL" + String.valueOf(i)); //testing z layer
+
             buttonCard.setBounds(((i == 0) ? 50 : 50 + offset * i), 10, 130, 200);
             buttonCard.setFocusPainted(false);
 
@@ -60,12 +65,63 @@ public class Controller implements MouseListener, MouseMotionListener {
             buttonCard.addMouseMotionListener(this);
             buttonCard.addMouseListener(this);
 
+            buttonCard = setCardStyle(buttonCard, currentPlayerHand.get(i));
+            //add a white border to card
+
+            //buttonCard.setBackground(Color.blue);
+
             playerCards.add(buttonCard);
+            playerCards.setComponentZOrder(buttonCard, i);
+            addButtonZ(buttonCard, i);
         }
 
         //add panel to view
         view.addPanel(playerCards, BorderLayout.SOUTH);
         view.repaint(); //just in case missed something
+    }
+
+    //sets color and type of card
+    private JButton setCardStyle(JButton buttonCard, Card card) {
+        //set color
+        switch (card.getColour()) {
+            case RED -> buttonCard.setBackground(new Color(156, 24, 9));
+            case BLUE -> buttonCard.setBackground(new Color(80, 139, 235));
+            case GREEN -> buttonCard.setBackground(new Color(29, 161, 31));
+            case YELLOW ->  buttonCard.setBackground(new Color(201, 196, 26));
+            case WILD -> buttonCard.setBackground(Color.WHITE);
+        }
+
+        //set card type/value
+        if (card.getType() == CardType.NUMBER) {
+            buttonCard.setText(String.valueOf(card.getValue()));
+        } else { //everything that's not a number
+            buttonCard.setText(card.getType().toString().replace('_', ' '));
+        }
+
+        //setting style for text
+        buttonCard.setForeground(
+                (card.getColour() == CardColour.WILD) ? Color.BLACK : Color.WHITE
+        );
+
+        String text = card.getType().toString().replace('_', ' ');
+        buttonCard.setFont(
+                (text.length() > 8) ? new Font("Arial", Font.BOLD, 12) : new Font("Arial", Font.BOLD, 18)
+        );
+
+        //set border to be more visible
+        buttonCard.setBorder(new LineBorder(Color.BLACK, 6));
+
+        //ensure button style is visible
+        buttonCard.setOpaque(true);
+        buttonCard.setContentAreaFilled(true);
+        buttonCard.setBorderPainted(true);
+
+        return buttonCard;
+    }
+
+    //whenever card/button played need to remove it from the list or just clear to map itself with fresh
+    public void addButtonZ(JButton button, int z) {
+        prevCardZ.put(button, z);
     }
 
     //add player to list and initializes their name
@@ -143,6 +199,7 @@ public class Controller implements MouseListener, MouseMotionListener {
 
             JPanel playerCards = getPlayerCards(); //get player panel
             playerCards.setComponentZOrder(buttonCard, 0);
+
             buttonCard.setLocation(buttonCard.getX(), buttonCard.getY() - 10);
             playerCards.repaint();
         }
@@ -153,6 +210,8 @@ public class Controller implements MouseListener, MouseMotionListener {
         if (hoveredButton != null) {
             JPanel playerCards = getPlayerCards();
             hoveredButton.setLocation(hoveredButton.getX(), hoveredButton.getY() + 10);
+            playerCards.setComponentZOrder(hoveredButton, prevCardZ.get(hoveredButton));
+
             hoveredButton = null;
             playerCards.repaint();
         }
