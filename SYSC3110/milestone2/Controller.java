@@ -19,6 +19,7 @@ public class Controller implements MouseListener, MouseMotionListener {
     private List<Card> currentPlayerHand;
 
     private JButton hoveredButton = null;
+    private JButton selectedCard = null;
 
     private boolean gameOver;
     private boolean roundOver;
@@ -34,13 +35,8 @@ public class Controller implements MouseListener, MouseMotionListener {
         //setup game
         gameManager = new GameManager(players);
         gameManager.startgame();
-        updatePlayerCards();
-        updateDiscardPile();
-
-        //need to use this topDiscard() to see top of discard for middle
-
-
-
+        updatePlayerCards(); //updates current player hand UI
+        updateDiscardPile(); //updates discard pile
 
         view.setVisible(true);
 
@@ -81,7 +77,7 @@ public class Controller implements MouseListener, MouseMotionListener {
 
             buttonCard.setBounds(
                     (i == 0) ? 50 : 50 + offset * i,
-                    10,
+                    30,
                     130,
                     200
             );
@@ -168,17 +164,44 @@ public class Controller implements MouseListener, MouseMotionListener {
         }
     }
 
-
-    void main(String[] args) {
-        //UnoView unoView = new UnoView();
-        //unoView.setVisible(true);
-        //Controller controller = new Controller();
-    }
-
     //implement this method for when a card is pressed
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(MouseEvent event) {
+        JButton buttonCard = (JButton) event.getSource(); //get button source
+        //might not need this
+        int index = (int) buttonCard.getClientProperty("index"); //get the index of button for card in hand
+        Card card = currentPlayerHand.get(index); //get card selected
 
+        handleCardPressed(buttonCard);
+
+    }
+
+    //handles for when a card is pressed
+    private void handleCardPressed(JButton button) {
+        JPanel playerCards = getPlayerCards(); //get player panel
+
+        if (selectedCard == null) { //no card select (keep raised)
+            selectedCard = button;
+            playerCards.setComponentZOrder(selectedCard, 0);
+            button.setLocation(button.getX(), button.getY() - 20);
+
+        } else if (selectedCard == button) { //same card (deselect)
+            playerCards.setComponentZOrder(selectedCard, prevCardZ.get(selectedCard));
+            selectedCard.setLocation(selectedCard.getX(), selectedCard.getY() + 20);
+
+            selectedCard = null;
+
+        } else { //another card selected (deselect current then select other)
+            playerCards.setComponentZOrder(button, prevCardZ.get(selectedCard));
+            selectedCard.setLocation(selectedCard.getX(), selectedCard.getY() + 20);
+
+            selectedCard = button;
+
+            playerCards.setComponentZOrder(selectedCard, 0);
+            button.setLocation(button.getX(), button.getY() - 20);
+        }
+
+        playerCards.repaint();
     }
 
     @Override
@@ -246,5 +269,11 @@ public class Controller implements MouseListener, MouseMotionListener {
     //returns panel
     private JPanel getPlayerCards() {
         return view.getPlayerCards();
+    }
+
+    void main(String[] args) {
+        //UnoView unoView = new UnoView();
+        //unoView.setVisible(true);
+        //Controller controller = new Controller();
     }
 }
