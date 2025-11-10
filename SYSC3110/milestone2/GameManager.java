@@ -48,6 +48,11 @@ public class GameManager {
         discardPile.push(firstCard);
     }
 
+    /**
+     * Allows controller to push card to discard pile.
+     * 
+     * @param card being played by player
+     */
     public void pushToDiscardPile(Card card) {
         discardPile.push(card);
     }
