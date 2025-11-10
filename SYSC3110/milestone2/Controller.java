@@ -37,9 +37,27 @@ public class Controller implements MouseListener, MouseMotionListener {
         gameManager.startgame();
         updatePlayerCards(); //updates current player hand UI
         updateDiscardPile(); //updates discard pile
+        updateCurrentPlayer();
 
         view.setVisible(true);
+        
+        gameOver = false;
+        roundOver = false;
+        
+        gameLoop();
 
+    }
+
+    private void gameLoop() {
+        while (!gameOver) {
+            
+        }
+    }
+
+    //displays current player name
+    private void updateCurrentPlayer() {
+        String name = players.get(gameManager.getCurrentPlayerIndex()).getName();
+        view.currentPlayerDisplay(name);
     }
 
     //updates the top discard pile after every state change
@@ -88,9 +106,7 @@ public class Controller implements MouseListener, MouseMotionListener {
             buttonCard.addMouseListener(this);
 
             buttonCard = setCardStyle(buttonCard, currentPlayerHand.get(i));
-            //add a white border to card
 
-            //buttonCard.setBackground(Color.blue);
 
             playerCards.add(buttonCard);
             playerCards.setComponentZOrder(buttonCard, i);
