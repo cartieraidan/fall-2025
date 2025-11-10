@@ -42,6 +42,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         players = new ArrayList<>();
         prevCardZ = new HashMap<>();
 
+        //methods for initializing GameManager
         getNumberPlayers();
         getPlayerNames();
 
@@ -65,19 +66,19 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
      * quit, draw, play
      */
     private void initializeControls() {
-        JPanel panel = view.getRightPanel();
+        JPanel panel = view.getRightPanel(); //JPanel for game controls
 
-        //quit
+        //quit JButton
         JButton quit = new JButton("Quit");
         quit.addActionListener(this);
         panel.add(quit);
 
-        //play
+        //play JButton
         play = new JButton("Play");
         play.addActionListener(this);
         panel.add(play);
 
-        //draw
+        //draw JButton
         draw = new JButton("Draw");
         draw.addActionListener(this);
         draw.setEnabled(false);
@@ -93,11 +94,12 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
      * @param card is the current card the player is trying to play.
      */
     public void handleWildCard(Card card) {
-        if (gameManager.checkvalidMove(card)) {
+        if (gameManager.checkvalidMove(card)) { //check if valid move
 
             String input;
             CardColour colour = null;
 
+            //loop to try until get a correct color
             while (true) {
                 input = JOptionPane.showInputDialog("choose a color (RED, BLUE, GREEN, YELLOW): ");
                 try {
@@ -109,9 +111,10 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
             }
 
             card.setColour(colour);
-            gameManager.pushToDiscardPile(card);
+            gameManager.pushToDiscardPile(card); //add to top of discard pile
 
             gameManager.nextTurn();
+
             //case for wild draw two cards
             if (card.getType() == CardType.WILD_DRAW_TWO) {
                 gameManager.getCurrentPlayer().drawCard(gameManager.getDeck());
@@ -127,17 +130,17 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
      * draw button enabled. If draw flag set and no valid moves, reset flags and nextTurn()
      */
     private void roundLoop() {
+        //maybe add check if win game loop in here
+
         //player can't play must draw
         if (!drawCard && (!(gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())))) {
-            System.out.println("play has no moves");
+            JOptionPane.showMessageDialog(null, "Player has no moves must draw");
             draw.setEnabled(true);
         }
 
         //player has no next turn
         if (drawCard && (!(gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())))) {
-            System.out.println("play has no moves after draw");
-
-            //probably centralize?
+            JOptionPane.showMessageDialog(null, "Player has no moves after draw, nextTurn");
 
             drawCard = false; //reset var
             draw.setEnabled(false);
@@ -153,24 +156,23 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
      * Updates the JLabel in view for which player is playing
      */
     private void updateCurrentPlayer() {
-        String name = gameManager.getCurrentPlayer().getName();
+        String name = gameManager.getCurrentPlayer().getName(); //gets current player name
         view.currentPlayerDisplay(name);
     }
-
-    //updates the top discard pile after every state change
 
     /**
      * Updates discard pile View by creating new card UI/button from top of stack then adding to JPanel in View.
      */
     private void updateDiscardPile() {
-        Card topCard = gameManager.topDiscard();
+        Card topCard = gameManager.topDiscard(); //get top card
+
+        //create JButton emulating player hand
         JButton discard = new JButton();
         discard.setEnabled(false);
         discard.setFocusPainted(false);
 
+        //set style
         discard = setCardStyle(discard, topCard);
-
-        //System.out.println(topCard.toString());
 
         discard.setBounds(
                 300,
@@ -179,7 +181,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
                 200
         );
 
-
+        //add to JFrame in view
         view.addCenterCard(discard);
     }
 
@@ -188,8 +190,8 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
      */
     private void resetVars() {
         prevCardZ.clear(); //reset map for updated hand
-        hoveredButton = null; //reset var
-        selectedCard = null; //reset var
+        hoveredButton = null; //reset variable
+        selectedCard = null; //reset variable
     }
 
     /**
@@ -199,18 +201,19 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
      */
     private void updatePlayerCards() {
         Player currentPlayer = gameManager.getCurrentPlayer();
-        currentPlayerHand = currentPlayer.gethand();
+        currentPlayerHand = currentPlayer.gethand(); //get current hand by player
 
-        JPanel playerCards = getPlayerCards();
+        JPanel playerCards = getPlayerCards(); //get player card/JButton JPanel
 
-        //need to move out function
+
         playerCards.removeAll(); //clear old components
-        resetVars();
+        resetVars(); //resets variables for method
 
+        //offset for handling multiple cards on a fixed JFrame
         int offset = (playerCards.getPreferredSize().width - 180) / currentPlayerHand.size();
 
+        //main loop creates buttons and adds to JPanel
         for (int i = 0; i < currentPlayerHand.size(); i++) {
-            //JButton buttonCard = new JButton(String.valueOf(currentPlayerHand.get(i).getValue())); //testing
             JButton buttonCard = new JButton();
 
             buttonCard.setBounds(
@@ -219,30 +222,31 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
                     130,
                     200
             );
-            buttonCard.setFocusPainted(false);
+            buttonCard.setFocusPainted(false); //disable focus indicator
 
-            buttonCard.putClientProperty("index", i);
+            buttonCard.putClientProperty("index", i); //hidden button index that is parallel with player hand list
+
+            //adding mouse listeners
             buttonCard.addMouseMotionListener(this);
             buttonCard.addMouseListener(this);
 
+            //setting style of card/JButton
             buttonCard = setCardStyle(buttonCard, currentPlayerHand.get(i));
 
 
-            playerCards.add(buttonCard);
-            playerCards.setComponentZOrder(buttonCard, i);
-            addButtonZ(buttonCard, i);
+            playerCards.add(buttonCard); //add to JPanel
+            playerCards.setComponentZOrder(buttonCard, i); //set z layer order by index
+            addButtonZ(buttonCard, i); //add to Map for dynamically changing z layer and reverting
 
 
         }
 
-        roundLoop();
+        roundLoop(); //handles extra game logic after all cards are loaded into game
 
         //add panel to view
         view.addPanel(playerCards, BorderLayout.SOUTH);
         view.repaint(); //just in case missed something
     }
-
-    //sets color and type of card
 
     /**
      * setCardStyle determines what the card will look like in the UI based on CardColour and CardType and value.
@@ -274,6 +278,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
                 (card.getColour() == CardColour.WILD) ? Color.BLACK : Color.WHITE
         );
 
+        //set font based on length
         String text = card.getType().toString().replace('_', ' ');
         buttonCard.setFont(
                 (text.length() > 8) ? new Font("Arial", Font.BOLD, 12) : new Font("Arial", Font.BOLD, 18)
@@ -299,7 +304,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
      * @param z the z index for the view layer order
      */
     public void addButtonZ(JButton button, int z) {
-        prevCardZ.put(button, z);
+        prevCardZ.put(button, z); //add to Map
     }
 
     /**
@@ -309,18 +314,18 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         for(int i = 0; i < playerCount; i++){
             String name = JOptionPane.showInputDialog("Enter the name of the player " + (i + 1) + ": ");
 
-            players.add(new Player(name));
+            players.add(new Player(name)); //add to ArrayList
         }
     }
-
-    //get player count
 
     /**
      * To get initialize list of players for GameManager, require number of players before names.
      */
     private void getNumberPlayers() {
         playerCount = Integer.parseInt(JOptionPane.showInputDialog("Input number of players(2-4): "));
-        while (playerCount < 2 || playerCount > 4){
+
+        //error checking
+        while (playerCount < 2 || playerCount > 4) {
             JOptionPane.showMessageDialog(null,"Invalid number. We have 2-4 players.");
             playerCount = Integer.parseInt(JOptionPane.showInputDialog("Input number of players(2-4): "));
         }
@@ -357,12 +362,12 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
             button.setLocation(button.getX(), button.getY() - 20);
         }
 
-        if (selectedCard != null) {
+        if (selectedCard != null) { //method to disable or enable play button (play card)
             playableCard(selectedCard);
         }
 
 
-        playerCards.repaint();
+        playerCards.repaint(); //changing card coords and z index
     }
 
     /**
@@ -371,7 +376,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
      * @param selectedCard selected button from event.
      */
     private void playableCard(JButton selectedCard) {
-        Card card = currentPlayerHand.get((int) selectedCard.getClientProperty("index")); //make this a function to call for all others
+        Card card = currentPlayerHand.get((int) selectedCard.getClientProperty("index")); //get card from button hidden index
         if (gameManager.checkvalidMove(card)) {
             play.setEnabled(true);
         } else {
@@ -388,13 +393,14 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
      * @param buttonCard the player will see interacting with.
      */
     private void handleHover(JButton buttonCard) {
-        if (hoveredButton != buttonCard) {
-            resetHover();
-            hoveredButton = buttonCard;
+        if (hoveredButton != buttonCard) { //button not already hovered on
+            resetHover(); //set back down previous
+            hoveredButton = buttonCard; 
 
             JPanel playerCards = getPlayerCards(); //get player panel
             playerCards.setComponentZOrder(buttonCard, 0);
 
+            //make hover
             buttonCard.setLocation(buttonCard.getX(), buttonCard.getY() - 10);
             playerCards.repaint();
         }
@@ -407,10 +413,10 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     private void resetHover() {
         if (hoveredButton != null) {
             JPanel playerCards = getPlayerCards();
-            hoveredButton.setLocation(hoveredButton.getX(), hoveredButton.getY() + 10);
+            hoveredButton.setLocation(hoveredButton.getX(), hoveredButton.getY() + 10); //set back down
 
             Integer z = prevCardZ.get(hoveredButton);
-            if (z != null) {
+            if (z != null) { //set previous card z index layer
                 playerCards.setComponentZOrder(hoveredButton, z);
             }
 
@@ -425,7 +431,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
      * @return JPanel to edit/remove/add components.
      */
     private JPanel getPlayerCards() {
-        return view.getPlayerCards();
+        return view.getPlayerCards(); //JPanel for player cards
     }
 
     /**
@@ -437,7 +443,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         if (selectedCard == null) {
             JOptionPane.showMessageDialog(null, "No card selected.");
         } else {
-            Card card = currentPlayerHand.get((int) selectedCard.getClientProperty("index"));
+            Card card = currentPlayerHand.get((int) selectedCard.getClientProperty("index")); //get card from button hidden index
 
             //wild requires input so controller has to take care of it
             if (card.getType() == CardType.WILD || card.getType() == CardType.WILD_DRAW_TWO) {
@@ -538,12 +544,12 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
     /**
      * Action listener for the game control buttons like quit, play, draw
-     * 
+     *
      * @param e the event to be processed
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
-        JButton button = (JButton) e.getSource();
+    public void actionPerformed(ActionEvent event) {
+        JButton button = (JButton) event.getSource();
 
         if (button.getText().equals("Quit")) {
             System.exit(0);
@@ -570,5 +576,5 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         //unoView.setVisible(true);
         //Controller controller = new Controller();
     }
-    
+
 }
