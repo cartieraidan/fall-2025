@@ -7,6 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The Controller class manages the state and flow of the GUI UNO game.
+ * Controller most of the game flow from interactions with the GUI and handle the logic to handle the.
+ *
+ *
+ * @author Aidan Cartier
+ * @version November 10, 2025
+ */
 public class Controller implements MouseListener, MouseMotionListener, ActionListener {
 
     private Map<JButton, Integer> prevCardZ; //used for tracking button prev z
@@ -25,6 +33,10 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     private boolean roundOver;
     private boolean drawCard = false;
 
+    /**
+     * Constructs a Controller that handles a view and model of UNO
+     *
+     */
     public Controller() {
         view = new UnoView();
         players = new ArrayList<>();
@@ -48,8 +60,11 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
     }
 
+    /**
+     * Initializes all the buttons at the top right of the screen
+     * quit, draw, play
+     */
     private void initializeControls() {
-        System.out.println("Initializing controls called");
         JPanel panel = view.getRightPanel();
 
         //quit
@@ -71,9 +86,13 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         view.repaint();
     }
 
+    /**
+     * Handles logic for when a wild card is played. If wild card is played check if valid move
+     * then ask user for input on colour then push card to discard pile.
+     *
+     * @param card is the current card the player is trying to play.
+     */
     public void handleWildCard(Card card) {
-        System.out.println("handleWildCard called");
-
         if (gameManager.checkvalidMove(card)) {
 
             String input;
@@ -103,40 +122,47 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
     }
 
+    /**
+     * roundLoop() handles the flags for drawing a card. If flag not set and there are no valid moves
+     * draw button enabled. If draw flag set and no valid moves, reset flags and nextTurn()
+     */
     private void roundLoop() {
-        System.out.println("roundLoop called");
-            //player can't play must draw
-            if (!drawCard && (!(gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())))) {
-                System.out.println("play has no moves");
-                draw.setEnabled(true);
-            }
+        //player can't play must draw
+        if (!drawCard && (!(gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())))) {
+            System.out.println("play has no moves");
+            draw.setEnabled(true);
+        }
 
-            //player has no next turn
-            if (drawCard && (!(gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())))) {
-                System.out.println("play has no moves after draw");
+        //player has no next turn
+        if (drawCard && (!(gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())))) {
+            System.out.println("play has no moves after draw");
 
-                //probably centralize?
+            //probably centralize?
 
-                drawCard = false; //reset var
-                draw.setEnabled(false);
+            drawCard = false; //reset var
+            draw.setEnabled(false);
 
-                gameManager.nextTurn();
+            gameManager.nextTurn();
 
-                updateView();
-            }
+            updateView();
+        }
 
     }
 
-    //displays current player name
+    /**
+     * Updates the JLabel in view for which player is playing
+     */
     private void updateCurrentPlayer() {
-        System.out.println("updateCurrentPlayer called");
         String name = gameManager.getCurrentPlayer().getName();
         view.currentPlayerDisplay(name);
     }
 
     //updates the top discard pile after every state change
+
+    /**
+     * Updates discard pile View by creating new card UI/button from top of stack then adding to JPanel in View.
+     */
     private void updateDiscardPile() {
-        System.out.println("updateDiscardPile called");
         Card topCard = gameManager.topDiscard();
         JButton discard = new JButton();
         discard.setEnabled(false);
@@ -157,14 +183,21 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         view.addCenterCard(discard);
     }
 
+    /**
+     * Everytime updatePlayerCards() is called these variables need to be reset to avoid null pointers.
+     */
     private void resetVars() {
         prevCardZ.clear(); //reset map for updated hand
         hoveredButton = null; //reset var
         selectedCard = null; //reset var
     }
 
+    /**
+     * Main method for the UNO cards UI setup, each turn it clears the JPanel then updates hands
+     * with dynamic x offsets and styling the button based on the Card class attributes.
+     * Adds MouseListener to buttons and sends final JPanel to view to be added to JFrame.
+     */
     private void updatePlayerCards() {
-        System.out.println("updatePlayerCards called");
         Player currentPlayer = gameManager.getCurrentPlayer();
         currentPlayerHand = currentPlayer.gethand();
 
@@ -210,8 +243,16 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     }
 
     //sets color and type of card
+
+    /**
+     * setCardStyle determines what the card will look like in the UI based on CardColour and CardType and value.
+     * Sets colour, sets numerical or special card, adjusts font, set styling visible
+     *
+     * @param buttonCard is the button we're styling based on card
+     * @param card used to grab styling attributes
+     * @return finalized style of the JButton as UNO card
+     */
     private JButton setCardStyle(JButton buttonCard, Card card) {
-        System.out.println("setCardStyle called");
         //set color
         switch (card.getColour()) {
             case RED -> buttonCard.setBackground(new Color(156, 24, 9));
@@ -249,15 +290,22 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         return buttonCard;
     }
 
-    //whenever card/button played need to remove it from the list or just clear to map itself with fresh
+    /**
+     * method to add the UNO card/JButton to a map with its z index.
+     * Z index for keeping track of its layer order in view as it dynamically changes off of cursor position.
+     * Use of Map to recall and needs to be cleared before every updatePlayerCards().
+     *
+     * @param button is the card/key
+     * @param z the z index for the view layer order
+     */
     public void addButtonZ(JButton button, int z) {
-        System.out.println("addButtonZ called");
         prevCardZ.put(button, z);
     }
 
-    //add player to list and initializes their name
+    /**
+     * Initializes player classes for the GameManager, requiring player name.
+     */
     private void getPlayerNames() {
-        System.out.println("getPlayerNames called");
         for(int i = 0; i < playerCount; i++){
             String name = JOptionPane.showInputDialog("Enter the name of the player " + (i + 1) + ": ");
 
@@ -266,8 +314,11 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     }
 
     //get player count
+
+    /**
+     * To get initialize list of players for GameManager, require number of players before names.
+     */
     private void getNumberPlayers() {
-        System.out.println("getNumberPlayers called");
         playerCount = Integer.parseInt(JOptionPane.showInputDialog("Input number of players(2-4): "));
         while (playerCount < 2 || playerCount > 4){
             JOptionPane.showMessageDialog(null,"Invalid number. We have 2-4 players.");
@@ -275,18 +326,14 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         }
     }
 
-    //implement this method for when a card is pressed
-    @Override
-    public void mouseClicked(MouseEvent event) {
-        JButton buttonCard = (JButton) event.getSource(); //get button source
-
-        handleCardPressed(buttonCard);
-
-    }
-
-    //handles for when a card is pressed
+    /**
+     * Allows player to select a card and attempt to play it. Card will be automatically assessed.
+     * If card selected is not a valid move the play button will not be enabled.
+     * As well as makes the card more visible and stand out from the interactive GUI.
+     *
+     * @param button event handler passed from event, i.e. card/JButton pressed.
+     */
     private void handleCardPressed(JButton button) {
-        System.out.println("handleCardPressed called");
         JPanel playerCards = getPlayerCards(); //get player panel
 
         if (selectedCard == null) { //no card select (keep raised)
@@ -318,8 +365,12 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         playerCards.repaint();
     }
 
+    /**
+     * Extra logic for handleCardPressed method for enabling or disabling play button if card is playable.
+     *
+     * @param selectedCard selected button from event.
+     */
     private void playableCard(JButton selectedCard) {
-        System.out.println("playableCard called");
         Card card = currentPlayerHand.get((int) selectedCard.getClientProperty("index")); //make this a function to call for all others
         if (gameManager.checkvalidMove(card)) {
             play.setEnabled(true);
@@ -329,42 +380,14 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         view.repaint();
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        resetHover();
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent event) {
-        //get current card hovering over
-        JButton buttonCard = (JButton) event.getSource();
-
-        handleHover(buttonCard);
-    }
-
-    //makes card hover when mouse over it
+    /**
+     * Handles when cursor is above card/JButton, called when mouse listener.
+     * Will reset previous card/JButton to original state then update the newest one
+     * with the highest z order for layers and shift it up.
+     *
+     * @param buttonCard the player will see interacting with.
+     */
     private void handleHover(JButton buttonCard) {
-        System.out.println("handleHover called");
         if (hoveredButton != buttonCard) {
             resetHover();
             hoveredButton = buttonCard;
@@ -377,9 +400,11 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         }
     }
 
-    //makes card not hover
+    /**
+     * Opposite of handleHover method. Put previous hovered card back to original state and z order for the
+     * component layer.
+     */
     private void resetHover() {
-        System.out.println("resetHover called");
         if (hoveredButton != null) {
             JPanel playerCards = getPlayerCards();
             hoveredButton.setLocation(hoveredButton.getX(), hoveredButton.getY() + 10);
@@ -394,20 +419,20 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         }
     }
 
-    //returns panel
+    /**
+     * Gets the player JPanel for the interactive card/JButton view.
+     *
+     * @return JPanel to edit/remove/add components.
+     */
     private JPanel getPlayerCards() {
-        System.out.println("getPlayerCards called");
         return view.getPlayerCards();
     }
 
-    void main(String[] args) {
-        //UnoView unoView = new UnoView();
-        //unoView.setVisible(true);
-        //Controller controller = new Controller();
-    }
-
+    /**
+     * Plays the card the player selected after pressing the play button.
+     * Goes through different logic if it is a wild card as it requires user input for its color.
+     */
     private void playCard() {
-        System.out.println("playCard called");
 
         if (selectedCard == null) {
             JOptionPane.showMessageDialog(null, "No card selected.");
@@ -426,12 +451,96 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
     }
 
+    /**
+     * Update view 3 major components. Most recurring piece of code.
+     */
     public void updateView() {
         updatePlayerCards();
         updateCurrentPlayer();
         updateDiscardPile();
     }
 
+    /**
+     * When cursor leaves area over card/JButton.
+     *
+     * @param event the event to be processed
+     */
+    @Override
+    public void mouseExited(MouseEvent event) {
+        resetHover();
+    }
+
+    /**
+     * Implemented for whenever a UNO/JButton Card is pressed, sends logic to handleCardPressed method.
+     *
+     * @param event the event to be processed
+     */
+    @Override
+    public void mouseClicked(MouseEvent event) {
+        JButton buttonCard = (JButton) event.getSource(); //get button source
+
+        handleCardPressed(buttonCard);
+
+    }
+
+    /**
+     * Mouse event for when cursor goes over the button.
+     *
+     * @param event the event to be processed
+     */
+    @Override
+    public void mouseMoved(MouseEvent event) {
+        //get current card hovering over
+        JButton buttonCard = (JButton) event.getSource();
+
+        handleHover(buttonCard);
+    }
+
+    /**
+     * Not required so not implemented.
+     *
+     * @param event the event to be processed
+     */
+    @Override
+    public void mousePressed(MouseEvent event) {
+
+    }
+
+    /**
+     * Not required so not implemented.
+     *
+     * @param event the event to be processed
+     */
+    @Override
+    public void mouseReleased(MouseEvent event) {
+
+    }
+
+    /**
+     * Not required so not implemented.
+     *
+     * @param event the event to be processed
+     */
+    @Override
+    public void mouseEntered(MouseEvent event) {
+
+    }
+
+    /**
+     * Not required so not implemented.
+     *
+     * @param event the event to be processed
+     */
+    @Override
+    public void mouseDragged(MouseEvent event) {
+
+    }
+
+    /**
+     * Action listener for the game control buttons like quit, play, draw
+     * 
+     * @param e the event to be processed
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton button = (JButton) e.getSource();
@@ -456,6 +565,10 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         }
     }
 
-
-
+    void main(String[] args) {
+        //UnoView unoView = new UnoView();
+        //unoView.setVisible(true);
+        //Controller controller = new Controller();
+    }
+    
 }
