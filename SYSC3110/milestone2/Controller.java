@@ -48,6 +48,8 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
         //setup game
         gameManager = new GameManager(players);
+        gameManager.setView(view);
+        view.subscribe(gameManager);
         gameManager.startgame();
         updateView();
 
@@ -147,6 +149,11 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
             player.clearHand();
         }
 
+
+        view.getPlayerCards().removeAll();
+        //view.getCenterPanel().removeAll();
+        view.repaint();
+
         gameManager.startgame();
         updateView();
     }
@@ -167,29 +174,15 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     }
 
     /**
-     * drawLogic() handles the flags for drawing a card. If flag not set and there are no valid moves
+     * roundLoop() handles the flags for drawing a card. If flag not set and there are no valid moves
      * draw button enabled. If draw flag set and no valid moves, reset flags and nextTurn()
      */
     private void drawLogic() {
 
-        //player can't play must draw
-        if (!drawCard && (!(gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())))) {
-            JOptionPane.showMessageDialog(null, "Player has no moves must draw");
+        if (!drawCard && !gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())) {
+            JOptionPane.showMessageDialog(null, "No playable cards. You must draw.");
             draw.setEnabled(true);
         }
-
-        //player has no next turn
-        if (drawCard && (!(gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())))) {
-            JOptionPane.showMessageDialog(null, "Player has no moves after draw, nextTurn");
-
-            drawCard = false; //reset var
-            draw.setEnabled(false);
-
-            gameManager.nextTurn();
-
-            updateView();
-        }
-
     }
 
     /**
@@ -493,11 +486,17 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
             //wild requires input so controller has to take care of it
             if (card.getType() == CardType.WILD || card.getType() == CardType.WILD_DRAW_TWO) {
-                handleWildCard(card);
                 currentPlayerHand.remove(card);
+                checkWinner();
+                handleWildCard(card);
+
+
             } else {
-                gameManager.playCard(card);
                 currentPlayerHand.remove(card); //remove card played from list, never implemented in game manager?
+                checkWinner();
+                gameManager.playCard(card);
+
+
             }
         }
 
@@ -609,18 +608,30 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         } else if (button.getText().equals("Draw")) {
             System.out.println("draw called");
 
-            if (!drawCard && (!(gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())))) {
-                drawCard = true;
-                gameManager.drawCard();
-                updatePlayerCards();
+            Player player = gameManager.getCurrentPlayer();
+
+            // Draw one card
+            gameManager.drawCard();
+            drawCard = true;
+            updatePlayerCards();
+
+            // After drawing, check if they can play now
+            if (!player.hasPlayableCard(gameManager.topDiscard())) {
+                JOptionPane.showMessageDialog(null, "Still no playable cards. Turn skipped.");
+                drawCard = false;
+                draw.setEnabled(false);
+                gameManager.nextTurn();
+                updateView();
+            } else {
+                JOptionPane.showMessageDialog(null, "You may now play your new card if possible.");
+                draw.setEnabled(false);
             }
         }
     }
 
-    void main(String[] args) {
-        //UnoView unoView = new UnoView();
-        //unoView.setVisible(true);
-        //Controller controller = new Controller();
+    public static void main(String[] args) {
+        UnoView unoView = new UnoView();
+        Controller controller = new Controller();
     }
 
 }
