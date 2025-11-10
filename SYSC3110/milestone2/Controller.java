@@ -36,9 +36,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         //setup game
         gameManager = new GameManager(players);
         gameManager.startgame();
-        updatePlayerCards(); //updates current player hand UI
-        updateDiscardPile(); //updates discard pile
-        updateCurrentPlayer();
+        updateView();
 
         initializeControls();
 
@@ -48,11 +46,10 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         roundOver = false;
 
 
-
-
     }
 
     private void initializeControls() {
+        System.out.println("Initializing controls called");
         JPanel panel = view.getRightPanel();
 
         //quit
@@ -75,6 +72,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     }
 
     public void handleWildCard(Card card) {
+        System.out.println("handleWildCard called");
 
         if (gameManager.checkvalidMove(card)) {
 
@@ -106,37 +104,39 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     }
 
     private void roundLoop() {
-
+        System.out.println("roundLoop called");
             //player can't play must draw
-            if (!drawCard && (!(gameManager.getPlayers().get(gameManager.getCurrentPlayerIndex()).hasPlayableCard(gameManager.topDiscard())))) {
+            if (!drawCard && (!(gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())))) {
                 System.out.println("play has no moves");
                 draw.setEnabled(true);
             }
 
             //player has no next turn
-            if (drawCard && (!(gameManager.getPlayers().get(gameManager.getCurrentPlayerIndex()).hasPlayableCard(gameManager.topDiscard())))) {
+            if (drawCard && (!(gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())))) {
                 System.out.println("play has no moves after draw");
-                gameManager.nextTurn();
+
                 //probably centralize?
 
                 drawCard = false; //reset var
                 draw.setEnabled(false);
 
-                updatePlayerCards();
-                updateCurrentPlayer();
-                updateDiscardPile();
+                gameManager.nextTurn();
+
+                updateView();
             }
 
     }
 
     //displays current player name
     private void updateCurrentPlayer() {
-        String name = gameManager.getPlayers().get(gameManager.getCurrentPlayerIndex()).getName();
+        System.out.println("updateCurrentPlayer called");
+        String name = gameManager.getCurrentPlayer().getName();
         view.currentPlayerDisplay(name);
     }
 
     //updates the top discard pile after every state change
     private void updateDiscardPile() {
+        System.out.println("updateDiscardPile called");
         Card topCard = gameManager.topDiscard();
         JButton discard = new JButton();
         discard.setEnabled(false);
@@ -157,19 +157,22 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         view.addCenterCard(discard);
     }
 
+    private void resetVars() {
+        prevCardZ.clear(); //reset map for updated hand
+        hoveredButton = null; //reset var
+        selectedCard = null; //reset var
+    }
+
     private void updatePlayerCards() {
-        Player currentPlayer = gameManager.getPlayers().get(gameManager.getCurrentPlayerIndex());
+        System.out.println("updatePlayerCards called");
+        Player currentPlayer = gameManager.getCurrentPlayer();
         currentPlayerHand = currentPlayer.gethand();
 
         JPanel playerCards = getPlayerCards();
 
         //need to move out function
         playerCards.removeAll(); //clear old components
-        prevCardZ.clear(); //reset map for updated hand
-        hoveredButton = null; //reset var
-        selectedCard = null; //reset var
-
-        updateDiscardPile(); //test
+        resetVars();
 
         int offset = (playerCards.getPreferredSize().width - 180) / currentPlayerHand.size();
 
@@ -196,8 +199,10 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
             playerCards.setComponentZOrder(buttonCard, i);
             addButtonZ(buttonCard, i);
 
-            roundLoop();
+
         }
+
+        roundLoop();
 
         //add panel to view
         view.addPanel(playerCards, BorderLayout.SOUTH);
@@ -206,6 +211,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
     //sets color and type of card
     private JButton setCardStyle(JButton buttonCard, Card card) {
+        System.out.println("setCardStyle called");
         //set color
         switch (card.getColour()) {
             case RED -> buttonCard.setBackground(new Color(156, 24, 9));
@@ -245,11 +251,13 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
     //whenever card/button played need to remove it from the list or just clear to map itself with fresh
     public void addButtonZ(JButton button, int z) {
+        System.out.println("addButtonZ called");
         prevCardZ.put(button, z);
     }
 
     //add player to list and initializes their name
     private void getPlayerNames() {
+        System.out.println("getPlayerNames called");
         for(int i = 0; i < playerCount; i++){
             String name = JOptionPane.showInputDialog("Enter the name of the player " + (i + 1) + ": ");
 
@@ -259,6 +267,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
     //get player count
     private void getNumberPlayers() {
+        System.out.println("getNumberPlayers called");
         playerCount = Integer.parseInt(JOptionPane.showInputDialog("Input number of players(2-4): "));
         while (playerCount < 2 || playerCount > 4){
             JOptionPane.showMessageDialog(null,"Invalid number. We have 2-4 players.");
@@ -277,6 +286,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
     //handles for when a card is pressed
     private void handleCardPressed(JButton button) {
+        System.out.println("handleCardPressed called");
         JPanel playerCards = getPlayerCards(); //get player panel
 
         if (selectedCard == null) { //no card select (keep raised)
@@ -309,6 +319,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     }
 
     private void playableCard(JButton selectedCard) {
+        System.out.println("playableCard called");
         Card card = currentPlayerHand.get((int) selectedCard.getClientProperty("index")); //make this a function to call for all others
         if (gameManager.checkvalidMove(card)) {
             play.setEnabled(true);
@@ -346,16 +357,14 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     @Override
     public void mouseMoved(MouseEvent event) {
         //get current card hovering over
-        //!!!!!!might only need this for selecting the card lol
         JButton buttonCard = (JButton) event.getSource();
-        int index = (int) buttonCard.getClientProperty("index");
-        Card card = currentPlayerHand.get(index);
 
         handleHover(buttonCard);
     }
 
     //makes card hover when mouse over it
     private void handleHover(JButton buttonCard) {
+        System.out.println("handleHover called");
         if (hoveredButton != buttonCard) {
             resetHover();
             hoveredButton = buttonCard;
@@ -370,6 +379,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
     //makes card not hover
     private void resetHover() {
+        System.out.println("resetHover called");
         if (hoveredButton != null) {
             JPanel playerCards = getPlayerCards();
             hoveredButton.setLocation(hoveredButton.getX(), hoveredButton.getY() + 10);
@@ -386,6 +396,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
     //returns panel
     private JPanel getPlayerCards() {
+        System.out.println("getPlayerCards called");
         return view.getPlayerCards();
     }
 
@@ -396,9 +407,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     }
 
     private void playCard() {
-
-
-        Player current = players.get(gameManager.getCurrentPlayerIndex());
+        System.out.println("playCard called");
 
         if (selectedCard == null) {
             JOptionPane.showMessageDialog(null, "No card selected.");
@@ -417,24 +426,32 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
 
     }
 
+    public void updateView() {
+        updatePlayerCards();
+        updateCurrentPlayer();
+        updateDiscardPile();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton button = (JButton) e.getSource();
 
         if (button.getText().equals("Quit")) {
             System.exit(0);
+
         } else if (button.getText().equals("Play")) {
+            System.out.println("play called");
             playCard();
-            //probably centralize?
-            updatePlayerCards();
-            updateCurrentPlayer();
-            updateDiscardPile();
+
+            updateView();
+
         } else if (button.getText().equals("Draw")) {
-            if (!drawCard && (!(gameManager.getPlayers().get(gameManager.getCurrentPlayerIndex()).hasPlayableCard(gameManager.topDiscard())))) {
+            System.out.println("draw called");
+
+            if (!drawCard && (!(gameManager.getCurrentPlayer().hasPlayableCard(gameManager.topDiscard())))) {
                 drawCard = true;
                 gameManager.drawCard();
                 updatePlayerCards();
-                view.repaint();
             }
         }
     }
