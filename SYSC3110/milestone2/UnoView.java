@@ -54,7 +54,7 @@ public class UnoView extends JFrame {
 
     public void addPanel(JPanel panel, String layout) {
         add(panel, layout);
-        add(player2, BorderLayout.NORTH);
+        //add(player2, BorderLayout.NORTH);
         add(player3, BorderLayout.WEST);
         add(player4, BorderLayout.EAST);
         pack();
@@ -62,6 +62,20 @@ public class UnoView extends JFrame {
 
     public JPanel getPlayerCards() {
         return playerCards;
+    }
+
+    public void currentPlayerDisplay(String name) {
+        JPanel display = new JPanel();
+        display.setPreferredSize(new Dimension(800, 100));
+
+        JLabel playerName = new JLabel("Current Player: " + name);
+        playerName.setFont(new Font("Arial", Font.BOLD, 50));
+        playerName.setForeground(Color.black);
+
+        display.add(playerName);
+        add(display, BorderLayout.NORTH);
+
+        repaint();
     }
 
 
