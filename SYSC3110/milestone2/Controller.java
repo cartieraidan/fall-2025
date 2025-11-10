@@ -74,7 +74,36 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         view.repaint();
     }
 
+    public void handleWildCard(Card card) {
 
+        if (gameManager.checkvalidMove(card)) {
+
+            String input;
+            CardColour colour = null;
+
+            while (true) {
+                input = JOptionPane.showInputDialog("choose a color (RED, BLUE, GREEN, YELLOW): ");
+                try {
+                    colour = CardColour.valueOf(input.trim().toUpperCase());
+                    break;
+                } catch (IllegalArgumentException e) {
+                    JOptionPane.showMessageDialog(null, "Invalid color");
+                }
+            }
+
+            card.setColour(colour);
+            gameManager.pushToDiscardPile(card);
+
+            gameManager.nextTurn();
+            //case for wild draw two cards
+            if (card.getType() == CardType.WILD_DRAW_TWO) {
+                gameManager.getCurrentPlayer().drawCard(gameManager.getDeck());
+                gameManager.getCurrentPlayer().drawCard(gameManager.getDeck());
+                gameManager.nextTurn();
+            }
+        }
+
+    }
 
     private void roundLoop() {
 
@@ -367,14 +396,23 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     }
 
     private void playCard() {
+
+
         Player current = players.get(gameManager.getCurrentPlayerIndex());
 
         if (selectedCard == null) {
             JOptionPane.showMessageDialog(null, "No card selected.");
         } else {
             Card card = currentPlayerHand.get((int) selectedCard.getClientProperty("index"));
-            gameManager.playCard(card);
-            currentPlayerHand.remove(card); //remove card played from list, never implemented in game manager?
+
+            //wild requires input so controller has to take care of it
+            if (card.getType() == CardType.WILD || card.getType() == CardType.WILD_DRAW_TWO) {
+                handleWildCard(card);
+                currentPlayerHand.remove(card);
+            } else {
+                gameManager.playCard(card);
+                currentPlayerHand.remove(card); //remove card played from list, never implemented in game manager?
+            }
         }
 
     }
@@ -400,4 +438,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
             }
         }
     }
+
+
+
 }
