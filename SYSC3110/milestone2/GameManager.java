@@ -16,6 +16,7 @@ public class GameManager {
     private final Stack<Card> discardPile;
     private int currentPlayerIndex;
     private int direction;
+    private Controller controller;
 
     /**
      * Constructs a GameManager with a list of players
@@ -28,6 +29,7 @@ public class GameManager {
         this.discardPile = new Stack<>();
         this.currentPlayerIndex = 0;
         this.direction = 1;
+        this.controller = controller;
     }
 
     /**
@@ -44,6 +46,10 @@ public class GameManager {
             firstCard = deck.drawCard();
         }
         discardPile.push(firstCard);
+    }
+
+    public void pushToDiscardPile(Card card) {
+        discardPile.push(card);
     }
 
     /**
@@ -136,6 +142,7 @@ public class GameManager {
                 getCurrentPlayer().drawCard(deck);
                 nextTurn();
             }
+            /*
             //case for wild cards
             case WILD, WILD_DRAW_TWO -> {
                 Scanner sc = new Scanner(System.in);
@@ -143,15 +150,18 @@ public class GameManager {
                 CardColour chosen = null;
                 //ask user for color until valid input
                 while (true) {
-                    System.out.print(getCurrentPlayer().getName() + ", choose a color (RED, BLUE, GREEN, YELLOW): ");
-                    input = sc.next().trim().toUpperCase();
+
+                    String temp = controller.handleWildCard(card);
+                    input = temp.trim().toUpperCase();
                     try {
                         chosen = CardColour.valueOf(input);
                         break;
                     } catch (IllegalArgumentException e) {
-                        System.out.println("Invalid color. Please try again.");
+                        controller.handleWildCardError();
                     }
                 }
+
+
 
                 card.setColour(chosen);
                 nextTurn();
@@ -162,9 +172,15 @@ public class GameManager {
                     nextTurn();
                 }
             }
+
+             */
             default -> {
             }
         }
+    }
+
+    public void handleWildCard(Card card) {
+
     }
 
     /**
@@ -172,7 +188,7 @@ public class GameManager {
      *
      * @return the current player
      */
-    private Player getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
     }
 
