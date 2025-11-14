@@ -31,7 +31,7 @@ public class BuddyInfo {
 
     @Override
     public String toString() {
-        return "Name: " + getName() + " Address: " + getAddress() + " Phone: " + getPhoneNumber();
+        return "Name: " + getName() + "#Address: " + getAddress() + "#Phone: " + getPhoneNumber();
     }
 
     public static void main(String[] args) {
