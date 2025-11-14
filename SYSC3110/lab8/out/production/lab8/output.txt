@@ -1,2 +1,3 @@
-Name: Alice#Address: 123 Main St#Phone: 555-1111
-Name: Bob#Address: 456 Oak St#Phone: 555-2222
+Name: Adina#Address: 123mm#Phone: 2265543
+Name: Afjdj#Address: 12344m#Phone: 223345543
+Name: aidan#Address: 2 street#Phone: 222-222-2222

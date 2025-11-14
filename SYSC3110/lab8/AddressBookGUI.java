@@ -89,10 +89,16 @@ public class AddressBookGUI extends JFrame implements ActionListener {
             addressSelected = book;
             createdAddress.add(book);
             JMenu address = new JMenu(book.getName());
+
             JMenuItem select = new JMenuItem("Select");
+            JMenuItem export = new JMenuItem("Export");
+
             address.add(select);
+            address.add(export);
+
             menuBar.add(address);
 
+            export.addActionListener(this);
             select.addActionListener(this);
 
             //for testing
@@ -133,6 +139,9 @@ public class AddressBookGUI extends JFrame implements ActionListener {
                         addressSelected = book;
                     }
                 }
+            } else if (item.getText().equals("Export")) {
+                String name = JOptionPane.showInputDialog("Enter Name of file: ");
+                addressSelected.export(name);
             }
         }
     }

@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -45,7 +46,7 @@ public class AddressBook extends DefaultListModel {
 
     public void save(String filename) {
         try {
-            FileWriter file = new FileWriter("output.txt");
+            FileWriter file = new FileWriter(filename);
 
             String text = "";
             for (int i = 0; i < buddyListModel.getSize(); i++) {
@@ -59,6 +60,25 @@ public class AddressBook extends DefaultListModel {
 
         } catch (IOException e) {
             System.out.println("error getting file");
+            e.printStackTrace();
+        }
+    }
+
+    public void export(String filename) {
+        String fileName = filename.trim() + ".txt";
+        try {
+            File file = new File(fileName);
+
+            if (file.exists()) {
+                System.out.println("overwriting existing file");
+            }else if (file.createNewFile()) { //try to create file
+                System.out.println("File created");
+            }
+
+            this.save(fileName);
+
+        } catch (IOException e) {
+            System.out.println("error creating file");
             e.printStackTrace();
         }
     }
