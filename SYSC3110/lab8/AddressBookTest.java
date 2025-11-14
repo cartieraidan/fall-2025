@@ -6,6 +6,7 @@ import javax.swing.*;
 import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class AddressBookTest {
@@ -75,6 +76,27 @@ public class AddressBookTest {
         DefaultListModel<BuddyInfo> book2List = book2.getBuddyListModel();
 
         //System.out.println(book.getName());
+
+        assertEquals(book1List.size(), book2List.size());
+        for (int i = 0; i < book1List.size(); i++) {
+
+            assertTrue(book1List.getElementAt(i).equals(book2List.getElementAt(i)));
+        }
+    }
+
+    @Test
+    public void testSerial() throws IOException, ClassNotFoundException {
+        book.addBuddyInfo(buddy1);
+        book.addBuddyInfo(buddy2);
+        book.addBuddyInfo(buddy3);
+
+
+        AddressBook.serializeToFile(book.getBuddyListModel(), "testSerial");
+
+        AddressBook book2 = AddressBook.loadAddressSerial("testSerial", "friends");
+
+        DefaultListModel<BuddyInfo> book1List = book.getBuddyListModel();
+        DefaultListModel<BuddyInfo> book2List = book2.getBuddyListModel();
 
         assertEquals(book1List.size(), book2List.size());
         for (int i = 0; i < book1List.size(); i++) {
