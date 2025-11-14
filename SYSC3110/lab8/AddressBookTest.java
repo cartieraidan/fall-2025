@@ -1,6 +1,9 @@
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class AddressBookTest {
     private AddressBook book;
@@ -24,5 +27,29 @@ public class AddressBookTest {
         String result = buddy1.toString();
         assertTrue(result.contains("Alice"));
         assertTrue(result.contains("555-1111"));
+    }
+
+    @Test
+    public void testSave() {
+        book.addBuddyInfo(buddy1);
+        book.addBuddyInfo(buddy2);
+
+        book.save("output.txt");
+
+        File file = new File("output.txt");
+
+        int count = 0;
+        try (Scanner myReader = new Scanner(file)) {
+            while (myReader.hasNextLine()) {
+                count++;
+                myReader.nextLine(); //need to consume a line
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.out.println("File not found");
+        }
+
+        //myReader does not count final empty lines
+        assertEquals(2, count);
     }
 }

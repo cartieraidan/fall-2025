@@ -21,6 +21,10 @@ public class AddressBook extends DefaultListModel {
         buddyListModel.addElement(buddyInfo);
     }
 
+    public void addBuddyInfo(BuddyInfo buddyInfo) {
+        buddyListModel.addElement(buddyInfo);
+    }
+
     public JList<BuddyInfo> getBuddyList() {
         buddyList = new JList<>(buddyListModel);
         return buddyList;
