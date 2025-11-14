@@ -57,6 +57,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
 
         display.addActionListener(this);
         create.addActionListener(this);
+        add.addActionListener(this);
     }
 
     private void displayInfo() {
@@ -116,6 +117,12 @@ public class AddressBookGUI extends JFrame implements ActionListener {
                     addressSelected = book;
                 }
             }
+        } else if (event.getSource() == add) {
+            String name = JOptionPane.showInputDialog("Enter Name: ");
+            String address = JOptionPane.showInputDialog("Enter Address: ");
+            String phone = JOptionPane.showInputDialog("Enter Phone Number: ");
+            addressSelected.addBuddyInfo(name, address, phone);
+            this.displayInfo();
         }
     }
 
