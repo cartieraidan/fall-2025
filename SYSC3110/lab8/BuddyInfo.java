@@ -1,3 +1,8 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 public class BuddyInfo {
     private String name;
     private String address;
@@ -31,7 +36,27 @@ public class BuddyInfo {
 
     @Override
     public String toString() {
-        return "Name: " + getName() + "#Address: " + getAddress() + "#Phone: " + getPhoneNumber();
+        return getName() + "#" + getAddress() + "#P" + getPhoneNumber();
+    }
+
+    public static ArrayList<BuddyInfo> importBuddyInfo(String filename) {
+        ArrayList<BuddyInfo> buddyInfos = new ArrayList<>();
+
+        File file = new File(filename);
+
+        try (Scanner myReader = new Scanner(file)) {
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine(); //need to consume a line
+                String[] dataArray = data.split("#");
+                BuddyInfo buddy = new BuddyInfo(dataArray[0], dataArray[1], dataArray[2]);
+                buddyInfos.add(buddy);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.out.println("File not found");
+        }
+
+        return buddyInfos;
     }
 
     public static void main(String[] args) {

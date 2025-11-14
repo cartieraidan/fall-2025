@@ -1,3 +1,3 @@
-Name: Adina#Address: 123mm#Phone: 2265543
-Name: Afjdj#Address: 12344m#Phone: 223345543
-Name: aidan#Address: 2 street#Phone: 222-222-2222
+Adina#123mm#P2265543
+Afjdj#12344m#P223345543
+aidan#2 street#P222-222-2222
