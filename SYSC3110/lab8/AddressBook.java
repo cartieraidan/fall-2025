@@ -1,11 +1,9 @@
 import javax.swing.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 
-public class AddressBook extends DefaultListModel {
+public class AddressBook extends DefaultListModel implements Serializable {
 
     private JList<BuddyInfo> buddyList;
 
@@ -100,5 +98,27 @@ public class AddressBook extends DefaultListModel {
 
     public DefaultListModel<BuddyInfo> getBuddyListModel() {
         return buddyListModel;
+    }
+
+    public static void serializeToFile(Object list, String filename) throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(list);
+        }
+    }
+
+    //annotation to ignore casting safety
+    @SuppressWarnings("unchecked")
+    public static AddressBook loadAddressSerial(String filename, String name) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            DefaultListModel<BuddyInfo> list = (DefaultListModel<BuddyInfo>) ois.readObject();
+            AddressBook book = new AddressBook(name);
+
+            for (int i = 0; i < list.getSize(); i++) {
+                book.addBuddyInfo(list.getElementAt(i));
+            }
+
+            return book;
+
+        }
     }
 }

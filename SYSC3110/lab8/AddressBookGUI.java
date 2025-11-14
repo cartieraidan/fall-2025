@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -23,6 +24,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
     private JMenuItem create;
     //private JMenuItem select;
     private JMenuItem importBook;
+    private JMenuItem importSerial;
 
     public AddressBookGUI() {
         setTitle("AddressBook");
@@ -41,12 +43,14 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         display = new JMenuItem("Display");
         create = new JMenuItem("Create");
         importBook = new JMenuItem("Import");
+        importSerial = new JMenuItem("ImportSerial");
 
         buddyOps.add(add);
         buddyOps.add(remove);
         buddyOps.add(display);
         addressMenu.add(create);
         addressMenu.add(importBook);
+        addressMenu.add(importSerial);
 
         menuBar.add(buddyOps);
         menuBar.add(addressMenu);
@@ -63,6 +67,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         add.addActionListener(this);
         remove.addActionListener(this);
         importBook.addActionListener(this);
+        importSerial.addActionListener(this);
     }
 
     private void displayInfo() {
@@ -90,14 +95,17 @@ public class AddressBookGUI extends JFrame implements ActionListener {
 
         JMenuItem select = new JMenuItem("Select");
         JMenuItem export = new JMenuItem("Export");
+        JMenuItem exportS = new JMenuItem("Export Serial");
 
         address.add(select);
         address.add(export);
+        address.add(exportS);
 
         menuBar.add(address);
 
         export.addActionListener(this);
         select.addActionListener(this);
+        exportS.addActionListener(this);
 
         //for testing
         //book.addBuddyInfo("Adina", "123mm", "2265543");
@@ -123,6 +131,17 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         displayInfo();
     }
 
+    private void importSerialAddress(String fileName, String bookName) {
+        try {
+            AddressBook book = AddressBook.loadAddressSerial(fileName, bookName);
+            addressFunctionality(book);
+            displayInfo();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     @Override
     public void actionPerformed(ActionEvent event) {
 
@@ -143,7 +162,12 @@ public class AddressBookGUI extends JFrame implements ActionListener {
             String fileName = JOptionPane.showInputDialog("Enter File Name(full name with .txt): ");
 
             importAddress(fileName, bookName);
-        } else if (event.getSource() instanceof JMenuItem item) {
+        } else if (event.getSource() == importSerial) {
+            String bookName = JOptionPane.showInputDialog("Enter Book Name: ");
+            String fileName = JOptionPane.showInputDialog("Enter File Name: ");
+
+            importSerialAddress(fileName, bookName);
+        }else if (event.getSource() instanceof JMenuItem item) {
             if (item.getText().equals("Select")) {
                 //JMenuItem selected = (JMenuItem) event.getSource();
                 JMenu parent = (JMenu) ((JPopupMenu) item.getParent()).getInvoker();
@@ -158,6 +182,14 @@ public class AddressBookGUI extends JFrame implements ActionListener {
             } else if (item.getText().equals("Export")) {
                 String name = JOptionPane.showInputDialog("Enter Name of file(don't include .txt): ");
                 addressSelected.export(name);
+            } else if (item.getText().equals("Export Serial")) {
+                String name = JOptionPane.showInputDialog("Enter Name of file(don't include extension name): ");
+                try {
+                    AddressBook.serializeToFile(addressSelected.getBuddyListModel(), name);
+                } catch (IOException e) {
+                    System.out.println("Error while saving file");
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

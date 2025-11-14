@@ -1,9 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class BuddyInfo {
+public class BuddyInfo implements Serializable {
+    private static final long serialVersionUID = 1L; //ID
     private String name;
     private String address;
     private String phoneNumber;
