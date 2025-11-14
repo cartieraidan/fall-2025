@@ -21,7 +21,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
     private JMenuItem remove;
     private JMenuItem display;
     private JMenuItem create;
-    private JMenuItem select;
+    //private JMenuItem select;
 
     public AddressBookGUI() {
         setTitle("AddressBook");
@@ -89,7 +89,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
             addressSelected = book;
             createdAddress.add(book);
             JMenu address = new JMenu(book.getName());
-            select = new JMenuItem("Select");
+            JMenuItem select = new JMenuItem("Select");
             address.add(select);
             menuBar.add(address);
 
@@ -113,17 +113,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
             this.displayInfo();
         } else if (event.getSource() == create) {
             this.createAddress();
-        } else if (event.getSource() == select) {
-            JMenuItem selected = (JMenuItem) event.getSource();
-            JMenu parent = (JMenu) ((JPopupMenu) selected.getParent()).getInvoker();
-            //System.out.println(parent.getText());
-
-            for (AddressBook book : createdAddress) {
-                if (book.getName().equals(parent.getText())) {
-                    addressSelected = book;
-                }
-            }
-        } else if (event.getSource() == add) {
+        }  else if (event.getSource() == add) {
             String name = JOptionPane.showInputDialog("Enter Name: ");
             String address = JOptionPane.showInputDialog("Enter Address: ");
             String phone = JOptionPane.showInputDialog("Enter Phone Number: ");
@@ -131,6 +121,19 @@ public class AddressBookGUI extends JFrame implements ActionListener {
             this.displayInfo();
         } else if (event.getSource() == remove) {
             this.remove();
+        } else if (event.getSource() instanceof JMenuItem item) {
+            if (item.getText().equals("Select")) {
+                //JMenuItem selected = (JMenuItem) event.getSource();
+                JMenu parent = (JMenu) ((JPopupMenu) item.getParent()).getInvoker();
+                //System.out.println(parent.getText());
+
+
+                for (AddressBook book : createdAddress) {
+                    if (book.getName().equals(parent.getText())) {
+                        addressSelected = book;
+                    }
+                }
+            }
         }
     }
 
