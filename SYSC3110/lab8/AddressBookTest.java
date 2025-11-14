@@ -1,5 +1,8 @@
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.swing.*;
+
 import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,12 +12,14 @@ public class AddressBookTest {
     private AddressBook book;
     private BuddyInfo buddy1;
     private BuddyInfo buddy2;
+    private BuddyInfo buddy3;
 
     @Before
     public void setUp() {
         book = new AddressBook("Friends");
         buddy1 = new BuddyInfo("Alice", "123 Main St", "555-1111");
         buddy2 = new BuddyInfo("Bob", "456 Oak St", "555-2222");
+        buddy3 = new BuddyInfo("auda", "2 street", "222-222-2222");
     }
 
     @Test
@@ -51,5 +56,30 @@ public class AddressBookTest {
 
         //myReader does not count final empty lines
         assertEquals(2, count);
+    }
+
+    @Test
+    public void testImportExport() {
+        book.addBuddyInfo(buddy1);
+        book.addBuddyInfo(buddy2);
+        book.addBuddyInfo(buddy3);
+
+        //String path = System.getProperty("user.dir") + "/testOutput.txt"; //JUnit has no brain
+
+        book.export("testOutput");
+
+
+        AddressBook book2 = AddressBook.loadAddress("testOutput.txt", "book2");
+
+        DefaultListModel<BuddyInfo> book1List = book.getBuddyListModel();
+        DefaultListModel<BuddyInfo> book2List = book2.getBuddyListModel();
+
+        //System.out.println(book.getName());
+
+        assertEquals(book1List.size(), book2List.size());
+        for (int i = 0; i < book1List.size(); i++) {
+
+            assertTrue(book1List.getElementAt(i).equals(book2List.getElementAt(i)));
+        }
     }
 }

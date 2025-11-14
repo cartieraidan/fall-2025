@@ -36,13 +36,16 @@ public class BuddyInfo {
 
     @Override
     public String toString() {
-        return getName() + "#" + getAddress() + "#P" + getPhoneNumber();
+        return getName() + "#" + getAddress() + "#" + getPhoneNumber();
     }
 
     public static ArrayList<BuddyInfo> importBuddyInfo(String filename) {
         ArrayList<BuddyInfo> buddyInfos = new ArrayList<>();
 
         File file = new File(filename);
+        System.out.println(file.exists());
+        System.out.println(filename);
+
 
         try (Scanner myReader = new Scanner(file)) {
             while (myReader.hasNextLine()) {

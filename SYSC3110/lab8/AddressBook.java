@@ -98,5 +98,7 @@ public class AddressBook extends DefaultListModel {
         return addressBook;
     }
 
-
+    public DefaultListModel<BuddyInfo> getBuddyListModel() {
+        return buddyListModel;
+    }
 }
