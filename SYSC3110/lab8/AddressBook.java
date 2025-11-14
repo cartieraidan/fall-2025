@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class AddressBook extends DefaultListModel {
@@ -45,6 +46,7 @@ public class AddressBook extends DefaultListModel {
     }
 
     public void save(String filename) {
+        //requires full file name ex. file.txt
         try {
             FileWriter file = new FileWriter(filename);
 
@@ -81,6 +83,19 @@ public class AddressBook extends DefaultListModel {
             System.out.println("error creating file");
             e.printStackTrace();
         }
+    }
+
+    public static AddressBook loadAddress(String filename, String bookName) {
+        ArrayList<BuddyInfo> buddyInfos = new ArrayList<>();
+        AddressBook addressBook = new AddressBook(bookName);
+
+        buddyInfos = BuddyInfo.importBuddyInfo(filename);
+
+        for (BuddyInfo buddyInfo : buddyInfos) {
+            addressBook.addBuddyInfo(buddyInfo);
+        }
+
+        return addressBook;
     }
 
 

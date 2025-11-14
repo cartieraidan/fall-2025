@@ -1,8 +1,8 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 
 public class AddressBookGUI extends JFrame implements ActionListener {
 
@@ -13,7 +13,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
 
     private JMenuBar menuBar;
     private JMenu buddyOps;
-    private JMenu AddressBook;
+    private JMenu addressMenu;
 
     private ArrayList<AddressBook> createdAddress; //need to implement function for when making new address book
 
@@ -22,6 +22,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
     private JMenuItem display;
     private JMenuItem create;
     //private JMenuItem select;
+    private JMenuItem importBook;
 
     public AddressBookGUI() {
         setTitle("AddressBook");
@@ -33,20 +34,22 @@ public class AddressBookGUI extends JFrame implements ActionListener {
 
         menuBar = new JMenuBar();
         buddyOps = new JMenu("Buddy");
-        AddressBook = new JMenu("Address");
+        addressMenu = new JMenu("Address");
         createdAddress = new ArrayList<>();
         add = new JMenuItem("Add");
         remove = new JMenuItem("Remove");
         display = new JMenuItem("Display");
         create = new JMenuItem("Create");
+        importBook = new JMenuItem("Import");
 
         buddyOps.add(add);
         buddyOps.add(remove);
         buddyOps.add(display);
-        AddressBook.add(create);
+        addressMenu.add(create);
+        addressMenu.add(importBook);
 
         menuBar.add(buddyOps);
-        menuBar.add(AddressBook);
+        menuBar.add(addressMenu);
 
         setJMenuBar(menuBar);
 
@@ -59,6 +62,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         create.addActionListener(this);
         add.addActionListener(this);
         remove.addActionListener(this);
+        importBook.addActionListener(this);
     }
 
     private void displayInfo() {
@@ -79,37 +83,44 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         repaint();
     }
 
-    private void createAddress() {
-        //needs to prompt
+    private void addressFunctionality(AddressBook book) {
+        addressSelected = book;
+        createdAddress.add(book);
+        JMenu address = new JMenu(book.getName());
 
+        JMenuItem select = new JMenuItem("Select");
+        JMenuItem export = new JMenuItem("Export");
+
+        address.add(select);
+        address.add(export);
+
+        menuBar.add(address);
+
+        export.addActionListener(this);
+        select.addActionListener(this);
+
+        //for testing
+        //book.addBuddyInfo("Adina", "123mm", "2265543");
+        //book.addBuddyInfo("Afjdj", "12344m", "223345543");
+
+        revalidate();
+        repaint();
+    }
+
+    private void createAddress() {
         String name = JOptionPane.showInputDialog("Enter Name: ");
         if (name != null && !name.trim().isEmpty()) {
             AddressBook book = new AddressBook(name);
-
-            addressSelected = book;
-            createdAddress.add(book);
-            JMenu address = new JMenu(book.getName());
-
-            JMenuItem select = new JMenuItem("Select");
-            JMenuItem export = new JMenuItem("Export");
-
-            address.add(select);
-            address.add(export);
-
-            menuBar.add(address);
-
-            export.addActionListener(this);
-            select.addActionListener(this);
-
-            //for testing
-            book.addBuddyInfo("Adina", "123mm", "2265543");
-            book.addBuddyInfo("Afjdj", "12344m", "223345543");
-
-            revalidate();
-            repaint();
+            this.addressFunctionality(book);
         }
 
 
+    }
+
+    private void importAddress(String filename, String bookName) {
+        AddressBook book = AddressBook.loadAddress(filename, bookName);
+        addressFunctionality(book);
+        displayInfo();
     }
 
     @Override
@@ -119,7 +130,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
             this.displayInfo();
         } else if (event.getSource() == create) {
             this.createAddress();
-        }  else if (event.getSource() == add) {
+        } else if (event.getSource() == add) {
             String name = JOptionPane.showInputDialog("Enter Name: ");
             String address = JOptionPane.showInputDialog("Enter Address: ");
             String phone = JOptionPane.showInputDialog("Enter Phone Number: ");
@@ -127,6 +138,11 @@ public class AddressBookGUI extends JFrame implements ActionListener {
             this.displayInfo();
         } else if (event.getSource() == remove) {
             this.remove();
+        } else if (event.getSource() == importBook) {
+            String bookName = JOptionPane.showInputDialog("Enter Book Name: ");
+            String fileName = JOptionPane.showInputDialog("Enter File Name(full name with .txt): ");
+
+            importAddress(fileName, bookName);
         } else if (event.getSource() instanceof JMenuItem item) {
             if (item.getText().equals("Select")) {
                 //JMenuItem selected = (JMenuItem) event.getSource();
@@ -140,7 +156,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
                     }
                 }
             } else if (item.getText().equals("Export")) {
-                String name = JOptionPane.showInputDialog("Enter Name of file: ");
+                String name = JOptionPane.showInputDialog("Enter Name of file(don't include .txt): ");
                 addressSelected.export(name);
             }
         }
