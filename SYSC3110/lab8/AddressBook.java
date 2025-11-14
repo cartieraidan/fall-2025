@@ -1,4 +1,7 @@
 import javax.swing.*;
+import java.io.FileWriter;
+import java.io.IOException;
+
 
 public class AddressBook extends DefaultListModel {
 
@@ -29,6 +32,26 @@ public class AddressBook extends DefaultListModel {
 
     public String getName() {
         return name;
+    }
+
+    public void save(String filename) {
+        try {
+            FileWriter file = new FileWriter("output.txt");
+
+            String text = "";
+            for (int i = 0; i < buddyListModel.getSize(); i++) {
+                BuddyInfo temp = (BuddyInfo) buddyListModel.get(i);
+                text += temp.toString() + "\n";
+            }
+
+            file.write(text);
+            file.close();
+            System.out.println("Output saved to file");
+
+        } catch (IOException e) {
+            System.out.println("error getting file");
+            e.printStackTrace();
+        }
     }
 
 
