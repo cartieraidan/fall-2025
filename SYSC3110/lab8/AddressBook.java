@@ -14,6 +14,7 @@ public class AddressBook extends DefaultListModel {
     public AddressBook(String name) {
         this.name = name;
         buddyListModel = new DefaultListModel<>();
+        buddyList = new JList<>(buddyListModel);
     }
 
     public void addBuddyInfo(String name, String address, String phoneNumber) {
@@ -25,8 +26,12 @@ public class AddressBook extends DefaultListModel {
         buddyListModel.addElement(buddyInfo);
     }
 
+    public void removeBuddyInfo(BuddyInfo buddyInfo) {
+        buddyListModel.removeElement(buddyInfo);
+    }
+
     public JList<BuddyInfo> getBuddyList() {
-        buddyList = new JList<>(buddyListModel);
+        //buddyList = new JList<>(buddyListModel);
         return buddyList;
     }
 

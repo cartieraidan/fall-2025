@@ -58,16 +58,22 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         display.addActionListener(this);
         create.addActionListener(this);
         add.addActionListener(this);
+        remove.addActionListener(this);
     }
 
     private void displayInfo() {
         //buddyDisplay.setBackground(Color.RED); //test
 
         JList<BuddyInfo> list = addressSelected.getBuddyList();
+        addDisplayPane(list);
+    }
+
+    private void addDisplayPane(JList<BuddyInfo> list) {
+        buddyDisplay.removeAll();
+
         JScrollPane scrollPane = new JScrollPane(list);
 
         buddyDisplay.add(scrollPane);
-
         setContentPane(buddyDisplay);
         revalidate();
         repaint();
@@ -123,7 +129,20 @@ public class AddressBookGUI extends JFrame implements ActionListener {
             String phone = JOptionPane.showInputDialog("Enter Phone Number: ");
             addressSelected.addBuddyInfo(name, address, phone);
             this.displayInfo();
+        } else if (event.getSource() == remove) {
+            this.remove();
         }
+    }
+
+    private void remove() {
+        JList<BuddyInfo> list = addressSelected.getBuddyList();
+        BuddyInfo selected = (BuddyInfo) list.getSelectedValue();
+
+        System.out.println("Removing " + selected.getName());
+
+        addressSelected.removeBuddyInfo(selected);
+
+        addDisplayPane(list);
     }
 
     public static void main(String[] args) {
