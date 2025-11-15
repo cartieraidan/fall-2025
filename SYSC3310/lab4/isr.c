@@ -6,6 +6,8 @@
 static volatile bool LEDstate = true; //default RED LED = true
 static uint16_t modes[] = {30000, 60000, 0, 15000}; //regular, slow, off, fast
 static volatile int index = 0;
+static uint8_t RGBoverflow = ((1<<0)|(1<<1)|(1<<2)); //00000111
+static volatile uint8_t RGBstate = (1<<0);
 
 void PORT1_IRQHandler(void) {
   
@@ -43,7 +45,23 @@ void PORT1_IRQHandler(void) {
 }
 
 void TA0_0_IRQHandler(void) {
+    if (LEDstate) {
+        P1OUT ^= (uint8_t)(1<<0); //toggling RED LED
+    } else {
+        RGBstate++; //increment state by 1
+	      RGBstate &= RGBoverflow; //ensure overflow does not affect other pins
+
+				if (RGBstate == 0) { //after roll over want to initialize to 1 not 0
+				    RGBstate++;
+				}
+	
+	      P2OUT &= (uint8_t)(~((1<<0)|(1<<1)|(1<<2))); //resets pins 0, 1, 2 to 0
+	      P2OUT |= RGBstate; //setting new state of pins 0, 1, 2
+
+				offState++; //increment tracker
+    }
 
 }
+
 
 
