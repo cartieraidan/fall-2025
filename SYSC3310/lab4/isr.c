@@ -14,7 +14,29 @@ void PORT1_IRQHandler(void) {
         LEDstate = (LEDstate) ? false : true; 
       
     } else if ((P1IFG & (uint8_t)(1<<4)) != 0) { //chaning modes
-      P1IFG &= (uint8_t)(~(1<<4)); //clear flag
+        P1IFG &= (uint8_t)(~(1<<4)); //clear flag
+
+        //resets if overflow
+        index = (index + 1) % (sizeof(modes) / sizeof(mods[0]));
+
+        if (index == 0) { //regular mode
+          TA0CCR0 = modes[index];
+
+        } else if (index == 1) { //slow mode
+          TA0CCR0 = modes[index];
+
+        } else if (index == 2) { //off mode
+            TA0CTL &= (uint8_t)(~((1<<4)|(1<<5))); //turn off timer
+            if (LEDstate) {
+                P1OUT &= (uint8_t)(~(1<<0)); //turn off RED LED
+            } else {
+                P2OUT &= (uint8_t)(~((1<<0)|(1<<1)|(1<<2))); //turn off RGB
+            }
+          
+        } else if (index == 3) { //fast mode
+            TA0CCR0 = modes[index]; //set new limit
+            TA0CTL |= (uint8_t)(1<<4); //set to up mode
+        }
       
 
     }
@@ -23,4 +45,5 @@ void PORT1_IRQHandler(void) {
 void TA0_0_IRQHandler(void) {
 
 }
+
 
