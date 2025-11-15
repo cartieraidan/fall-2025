@@ -19,7 +19,7 @@ void PORT1_IRQHandler(void) {
         P1IFG &= (uint8_t)(~(1<<4)); //clear flag
 
         //resets if overflow
-        index = (index + 1) % (sizeof(modes) / sizeof(mods[0]));
+        index = (index + 1) % (sizeof(modes) / sizeof(modes[0]));
 
         if (index == 0) { //regular mode
           TA0CCR0 = modes[index];
@@ -37,8 +37,15 @@ void PORT1_IRQHandler(void) {
           
         } else if (index == 3) { //fast mode
             TA0CCR0 = modes[index]; //set new limit
-            TA0CTL |= (uint8_t)(1<<4); //set to up mode
+    
         }
+
+		//if timer is off
+		if (!(TA0CTL & (uint8_t)((1<<4)|(1<<5))) && index != 2) { //(TA0CTL & MC__STOP) == 0?
+			//set to up mode
+			TA0CTL |= (uint8_t)(1<<4); //TA0CTL |= MC__UP;?
+			
+		}
       
 
     }
@@ -49,19 +56,19 @@ void TA0_0_IRQHandler(void) {
         P1OUT ^= (uint8_t)(1<<0); //toggling RED LED
     } else {
         RGBstate++; //increment state by 1
-	      RGBstate &= RGBoverflow; //ensure overflow does not affect other pins
+	    RGBstate &= RGBoverflow; //ensure overflow does not affect other pins
 
-				if (RGBstate == 0) { //after roll over want to initialize to 1 not 0
-				    RGBstate++;
-				}
+		if (RGBstate == 0) { //after roll over want to initialize to 1 not 0
+			RGBstate++;
+		}
 	
-	      P2OUT &= (uint8_t)(~((1<<0)|(1<<1)|(1<<2))); //resets pins 0, 1, 2 to 0
-	      P2OUT |= RGBstate; //setting new state of pins 0, 1, 2
+	    P2OUT &= (uint8_t)(~((1<<0)|(1<<1)|(1<<2))); //resets pins 0, 1, 2 to 0
+	    P2OUT |= RGBstate; //setting new state of pins 0, 1, 2
 
-				offState++; //increment tracker
     }
 
 }
+
 
 
 
