@@ -79,7 +79,7 @@ int main() {
 	TA0CTL |= (uint8_t)((1<<6)|(1<<7));
 	
 	//set limit for timer
-	TA0CCR0 = 40000;
+	TA0CCR0 = 30000; //default regular mode
 	
 	//set priority
 	NVIC_SetPriority(TA0_0_IRQn, 2);
@@ -101,4 +101,5 @@ int main() {
 
 	while (1) { }
 }
+
 
