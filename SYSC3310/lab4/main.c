@@ -66,7 +66,7 @@ int main() {
 	TA0CTL &= (uint8_t)(~((1<<4)|(1<<5)));
 	
 	//set source to TAxCLK
-	TA0CTL &= (uint8_t)(~((1<<8)|(1<<9)));
+	//TA0CTL &= (uint8_t)(~((1<<8)|(1<<9)));
 	
 	//enable interrupt
 	TA0CTL |= (uint8_t)(1<<1);
@@ -83,19 +83,22 @@ int main() {
 	
 	//set priority
 	NVIC_SetPriority(TA0_0_IRQn, 2);
-	NVIC_SetPriority(TA0_N_IRQn, 2);
+	//NVIC_SetPriority(TA0_N_IRQn, 2);
 	NVIC_SetPriority(PORT1_IRQn, 2);
 	
 	//clear pending interrupt
 	NVIC_ClearPendingIRQ(TA0_0_IRQn);
-	NVIC_ClearPendingIRQ(TA0_N_IRQn);
+	//NVIC_ClearPendingIRQ(TA0_N_IRQn);
 	NVIC_ClearPendingIRQ(PORT1_IRQn);
 	
 	//enable interrupts in NVIC
 	NVIC_EnableIRQ(PORT1_IRQn);
 	NVIC_EnableIRQ(TA0_0_IRQn);
-	NVIC_EnableIRQ(TA0_N_IRQn);
+	//NVIC_EnableIRQ(TA0_N_IRQn);
 	
 	__ASM("CPSIE I");
-	
+
+
+	while (1) { }
 }
+
