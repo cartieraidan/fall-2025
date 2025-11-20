@@ -1,0 +1,212 @@
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.ArrayList;
+
+
+public class AddressBookGUI extends JFrame implements ActionListener {
+
+    private JPanel mainPanel;
+    private JPanel buddyDisplay;
+
+    private AddressBook addressSelected;
+
+    private JMenuBar menuBar;
+    private JMenu buddyOps;
+    private JMenu addressMenu;
+
+    private ArrayList<AddressBook> createdAddress; //need to implement function for when making new address book
+
+    private JMenuItem add;
+    private JMenuItem remove;
+    private JMenuItem display;
+    private JMenuItem create;
+    //private JMenuItem select;
+    private JMenuItem importBook;
+    private JMenuItem importSerial;
+
+    public AddressBookGUI() {
+        setTitle("AddressBook");
+
+        mainPanel = new JPanel();
+        buddyDisplay = new JPanel();
+
+        setContentPane(mainPanel);
+
+        menuBar = new JMenuBar();
+        buddyOps = new JMenu("Buddy");
+        addressMenu = new JMenu("Address");
+        createdAddress = new ArrayList<>();
+        add = new JMenuItem("Add");
+        remove = new JMenuItem("Remove");
+        display = new JMenuItem("Display");
+        create = new JMenuItem("Create");
+        importBook = new JMenuItem("Import");
+        importSerial = new JMenuItem("ImportSerial");
+
+        buddyOps.add(add);
+        buddyOps.add(remove);
+        buddyOps.add(display);
+        addressMenu.add(create);
+        addressMenu.add(importBook);
+        addressMenu.add(importSerial);
+
+        menuBar.add(buddyOps);
+        menuBar.add(addressMenu);
+
+        setJMenuBar(menuBar);
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(500, 700);
+        setResizable(false);
+        setVisible(true);
+
+        display.addActionListener(this);
+        create.addActionListener(this);
+        add.addActionListener(this);
+        remove.addActionListener(this);
+        importBook.addActionListener(this);
+        importSerial.addActionListener(this);
+    }
+
+    private void displayInfo() {
+        //buddyDisplay.setBackground(Color.RED); //test
+
+        JList<BuddyInfo> list = addressSelected.getBuddyList();
+        addDisplayPane(list);
+    }
+
+    private void addDisplayPane(JList<BuddyInfo> list) {
+        buddyDisplay.removeAll();
+
+        JScrollPane scrollPane = new JScrollPane(list);
+
+        buddyDisplay.add(scrollPane);
+        setContentPane(buddyDisplay);
+        revalidate();
+        repaint();
+    }
+
+    private void addressFunctionality(AddressBook book) {
+        addressSelected = book;
+        createdAddress.add(book);
+        JMenu address = new JMenu(book.getName());
+
+        JMenuItem select = new JMenuItem("Select");
+        JMenuItem export = new JMenuItem("Export");
+        JMenuItem exportS = new JMenuItem("Export Serial");
+
+        address.add(select);
+        address.add(export);
+        address.add(exportS);
+
+        menuBar.add(address);
+
+        export.addActionListener(this);
+        select.addActionListener(this);
+        exportS.addActionListener(this);
+
+        //for testing
+        //book.addBuddyInfo("Adina", "123mm", "2265543");
+        //book.addBuddyInfo("Afjdj", "12344m", "223345543");
+
+        revalidate();
+        repaint();
+    }
+
+    private void createAddress() {
+        String name = JOptionPane.showInputDialog("Enter Name: ");
+        if (name != null && !name.trim().isEmpty()) {
+            AddressBook book = new AddressBook(name);
+            this.addressFunctionality(book);
+        }
+
+
+    }
+
+    private void importAddress(String filename, String bookName) {
+        AddressBook book = AddressBook.loadAddress(filename, bookName);
+        addressFunctionality(book);
+        displayInfo();
+    }
+
+    private void importSerialAddress(String fileName, String bookName) {
+        try {
+            AddressBook book = AddressBook.loadAddressSerial(fileName, bookName);
+            addressFunctionality(book);
+            displayInfo();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent event) {
+
+        if (event.getSource() == display) {
+            this.displayInfo();
+        } else if (event.getSource() == create) {
+            this.createAddress();
+        } else if (event.getSource() == add) {
+            String name = JOptionPane.showInputDialog("Enter Name: ");
+            String address = JOptionPane.showInputDialog("Enter Address: ");
+            String phone = JOptionPane.showInputDialog("Enter Phone Number: ");
+            addressSelected.addBuddyInfo(name, address, phone);
+            this.displayInfo();
+        } else if (event.getSource() == remove) {
+            this.remove();
+        } else if (event.getSource() == importBook) {
+            String bookName = JOptionPane.showInputDialog("Enter Book Name: ");
+            String fileName = JOptionPane.showInputDialog("Enter File Name(full name with .txt): ");
+
+            importAddress(fileName, bookName);
+        } else if (event.getSource() == importSerial) {
+            String bookName = JOptionPane.showInputDialog("Enter Book Name: ");
+            String fileName = JOptionPane.showInputDialog("Enter File Name: ");
+
+            importSerialAddress(fileName, bookName);
+        }else if (event.getSource() instanceof JMenuItem item) {
+            if (item.getText().equals("Select")) {
+                //JMenuItem selected = (JMenuItem) event.getSource();
+                JMenu parent = (JMenu) ((JPopupMenu) item.getParent()).getInvoker();
+                //System.out.println(parent.getText());
+
+
+                for (AddressBook book : createdAddress) {
+                    if (book.getName().equals(parent.getText())) {
+                        addressSelected = book;
+                    }
+                }
+            } else if (item.getText().equals("Export")) {
+                String name = JOptionPane.showInputDialog("Enter Name of file(don't include .txt): ");
+                addressSelected.export(name);
+            } else if (item.getText().equals("Export Serial")) {
+                String name = JOptionPane.showInputDialog("Enter Name of file(don't include extension name): ");
+                try {
+                    AddressBook.serializeToFile(addressSelected.getBuddyListModel(), name);
+                } catch (IOException e) {
+                    System.out.println("Error while saving file");
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    private void remove() {
+        JList<BuddyInfo> list = addressSelected.getBuddyList();
+        BuddyInfo selected = (BuddyInfo) list.getSelectedValue();
+
+        System.out.println("Removing " + selected.getName());
+
+        addressSelected.removeBuddyInfo(selected);
+
+        addDisplayPane(list);
+    }
+
+    public static void main(String[] args) {
+
+        AddressBookGUI obj = new AddressBookGUI();
+    }
+}
