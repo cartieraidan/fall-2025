@@ -30,6 +30,10 @@ public class AddressBook extends DefaultListModel implements Serializable {
         buddyList = new JList<>(buddyListModel); //interactive list
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
      * Adds a BuddyInfo to address book list.
      *
@@ -271,12 +275,29 @@ public class AddressBook extends DefaultListModel implements Serializable {
 
          */
 
+        /*
         //this works
         AddressBookXMLParser parser = new AddressBookXMLParser();
         try {
             ArrayList<BuddyInfo> temp = parser.readXMLFile("outputXML.xml");
             for (BuddyInfo buddy: temp) {
                 System.out.println(buddy.toString());
+            }
+        } catch (IOException e) {
+            e.getMessage();
+        }
+
+         */
+
+        AddressBookXMLParser parser = new AddressBookXMLParser();
+        try {
+            AddressBook temp = parser.readXMLFileOutAddress("outputXML.xml");
+
+            System.out.println("Name of address " + temp.getName());
+
+            DefaultListModel<BuddyInfo> list = temp.getBuddyListModel();
+            for (int i =0; i < temp.getSize(); i++) {
+                System.out.println(list.getElementAt(i).toString());
             }
         } catch (IOException e) {
             e.getMessage();

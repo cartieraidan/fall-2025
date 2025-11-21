@@ -13,6 +13,7 @@ public class AddressBookXMLParser extends DefaultHandler {
 
     private ArrayList<BuddyInfo> buddyInfos;
     private StringBuilder elementContent;
+    private AddressBook book;
 
     /**
      * Called when document starts
@@ -44,6 +45,8 @@ public class AddressBookXMLParser extends DefaultHandler {
             BuddyInfo currentBuddy = new BuddyInfo();
             buddyInfos.add(currentBuddy);
 
+        } else if (qName.equalsIgnoreCase("addressBook")) {
+            book = new AddressBook("N/A");
         }
 
         elementContent = new StringBuilder();
@@ -81,8 +84,10 @@ public class AddressBookXMLParser extends DefaultHandler {
 
         } else if (qName.equalsIgnoreCase("address")) {
             buddyInfos.getLast().setAddress(elementContent.toString());
-        }  else if (qName.equalsIgnoreCase("phoneNumber")) {
+        } else if (qName.equalsIgnoreCase("phoneNumber")) {
             buddyInfos.getLast().setPhoneNumber(elementContent.toString());
+        } else if (qName.equalsIgnoreCase("addressBookName")) {
+            book.setName(elementContent.toString());
         }
     }
 
@@ -98,8 +103,26 @@ public class AddressBookXMLParser extends DefaultHandler {
         }
     }
 
+    public AddressBook readXMLFileOutAddress(String fileName) throws IOException {
+        try {
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            SAXParser parser = spf.newSAXParser();
+            File file = new File(fileName);
+            parser.parse(file, this);
 
+            addBuddies();
 
+            return book; //replace
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            throw new IOException(e);
+        }
+    }
+
+    private void addBuddies() {
+        for (BuddyInfo buddyInfo : buddyInfos) {
+            book.addBuddyInfo(buddyInfo);
+        }
+    }
 
 
 }
