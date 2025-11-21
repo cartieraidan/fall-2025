@@ -211,6 +211,29 @@ public class AddressBook extends DefaultListModel implements Serializable {
         }
     }
 
+    public static void exportToXmlFile(AddressBook book, String filename) throws IOException {
+        String fileName = filename.trim(); //get rid of any whitespace and add .txt
+
+        if (!fileName.toLowerCase().endsWith(".xml")) {
+            fileName += ".xml";
+        }
+
+        File file = new File(fileName); //create file instance
+
+        if (file.exists()) { //file already created
+            System.out.println("overwriting existing file");
+
+        }else if (file.createNewFile()) { //try to create file
+            System.out.println("File created");
+        }
+
+        try (FileWriter out = new FileWriter(fileName)) {
+            out.write(book.toXML());
+        }
+
+
+    }
+
     private String getBuddyXML() {
         StringBuilder buddyXML = new StringBuilder();
         for (int i = 0; i < buddyListModel.getSize(); i++) {
@@ -238,5 +261,11 @@ public class AddressBook extends DefaultListModel implements Serializable {
         book.addBuddyInfo("test4", "test5", "test6");
 
         System.out.println(book.toXML());
+
+        try {
+            AddressBook.exportToXmlFile(book, "outputXML");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
