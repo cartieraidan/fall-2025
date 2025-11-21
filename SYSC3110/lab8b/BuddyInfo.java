@@ -39,6 +39,18 @@ public class BuddyInfo implements Serializable {
         this("N/A", "N/A", "N/A");
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     /**
      * Used for test cases, determines if same objects are the same by comparing name and
      * address of each object instead of location in memory.
