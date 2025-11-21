@@ -104,4 +104,33 @@ public class AddressBookTest {
             assertTrue(book1List.getElementAt(i).equals(book2List.getElementAt(i)));
         }
     }
+
+    @Test
+    public void testXML() throws IOException {
+        book.addBuddyInfo(buddy1);
+        book.addBuddyInfo(buddy2);
+        book.addBuddyInfo(buddy3);
+
+        AddressBook.exportToXmlFile(book, "test.xml");
+
+        AddressBookXMLParser parser = new AddressBookXMLParser();
+
+
+        try {
+            AddressBook book2 = parser.readXMLFileOutAddress("test.xml");
+
+            DefaultListModel<BuddyInfo> book1List = book.getBuddyListModel();
+            DefaultListModel<BuddyInfo> book2List = book2.getBuddyListModel();
+
+            assertEquals(book1List.size(), book2List.size());
+            for (int i = 0; i < book1List.size(); i++) {
+
+                assertTrue(book1List.getElementAt(i).equals(book2List.getElementAt(i)));
+            }
+
+        } catch (IOException e) {
+            e.getMessage();
+        }
+
+    }
 }
