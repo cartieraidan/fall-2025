@@ -134,11 +134,13 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         JMenuItem select = new JMenuItem("Select");
         JMenuItem export = new JMenuItem("Export");
         JMenuItem exportS = new JMenuItem("Export Serial");
+        JMenuItem exportXML = new JMenuItem("Export XML");
 
         //adding to parent
         address.add(select);
         address.add(export);
         address.add(exportS);
+        address.add(exportXML);
 
         //adding menu parent to menu bar
         menuBar.add(address);
@@ -147,6 +149,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         export.addActionListener(this);
         select.addActionListener(this);
         exportS.addActionListener(this);
+        exportXML.addActionListener(this);
 
         //for testing
         //book.addBuddyInfo("Adina", "123mm", "2265543");
@@ -273,6 +276,13 @@ public class AddressBookGUI extends JFrame implements ActionListener {
                     AddressBook.serializeToFile(addressSelected.getBuddyListModel(), name);
                 } catch (IOException e) {
                     System.out.println("Error while saving file");
+                    throw new RuntimeException(e);
+                }
+            } else if (item.getText().equals("Export XML")) {
+                String fileName = JOptionPane.showInputDialog("Enter File Name(full name with .xml): ");
+                try {
+                    AddressBook.exportToXmlFile(addressSelected, fileName);
+                } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
