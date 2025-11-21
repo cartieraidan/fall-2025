@@ -4,11 +4,16 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
+/**
+ * View class that creates a JFrame to display address books.
+ *
+ * @author Aidan Cartier
+ * @version November 21, 2025
+ */
 public class AddressBookGUI extends JFrame implements ActionListener {
 
     private JPanel mainPanel;
-    private JPanel buddyDisplay;
+    private JPanel buddyDisplay; //used to display BuddyInfo
 
     private AddressBook addressSelected;
 
@@ -26,6 +31,9 @@ public class AddressBookGUI extends JFrame implements ActionListener {
     private JMenuItem importBook;
     private JMenuItem importSerial;
 
+    /**
+     *Constructor that creates JFrame initializes everything needed.
+     */
     public AddressBookGUI() {
         setTitle("AddressBook");
 
@@ -34,6 +42,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
 
         setContentPane(mainPanel);
 
+        //all menu bar objects
         menuBar = new JMenuBar();
         buddyOps = new JMenu("Buddy");
         addressMenu = new JMenu("Address");
@@ -45,6 +54,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         importBook = new JMenuItem("Import");
         importSerial = new JMenuItem("ImportSerial");
 
+        //adding to parent objects
         buddyOps.add(add);
         buddyOps.add(remove);
         buddyOps.add(display);
@@ -52,16 +62,20 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         addressMenu.add(importBook);
         addressMenu.add(importSerial);
 
+        //adding parent objects to menu bar
         menuBar.add(buddyOps);
         menuBar.add(addressMenu);
 
+        //set menu bar for JFrame
         setJMenuBar(menuBar);
 
+        //JFrame settings
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 700);
         setResizable(false);
         setVisible(true);
 
+        //Adding action listeners for menu items
         display.addActionListener(this);
         create.addActionListener(this);
         add.addActionListener(this);
@@ -70,6 +84,10 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         importSerial.addActionListener(this);
     }
 
+    /**
+     * Method that display JList of BuddyInfo, calls addDisplayPane to handle updating
+     * the current panel.
+     */
     private void displayInfo() {
         //buddyDisplay.setBackground(Color.RED); //test
 
@@ -77,32 +95,51 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         addDisplayPane(list);
     }
 
+    /**
+     * Method that removes all components from display pane then adds the
+     * JList to it then updates the view for the user to see it.
+     *
+     * @param list JList of current selected address book.
+     */
     private void addDisplayPane(JList<BuddyInfo> list) {
-        buddyDisplay.removeAll();
+        buddyDisplay.removeAll(); //remove all components
 
-        JScrollPane scrollPane = new JScrollPane(list);
+        JScrollPane scrollPane = new JScrollPane(list); //adds JList
 
-        buddyDisplay.add(scrollPane);
-        setContentPane(buddyDisplay);
+        buddyDisplay.add(scrollPane); //add to panel
+        setContentPane(buddyDisplay); //set as current view
+
+        //update for user
         revalidate();
         repaint();
     }
 
+    /**
+     * Method for initializing all functions when creating an address book,
+     * like adding a new menu file and items that are separate for each address book
+     * and adding action listeners.
+     *
+     * @param book Address book that was newly created by user input.
+     */
     private void addressFunctionality(AddressBook book) {
-        addressSelected = book;
-        createdAddress.add(book);
-        JMenu address = new JMenu(book.getName());
+        addressSelected = book; //updates current selected address book
+        createdAddress.add(book); //add to list to track
+        JMenu address = new JMenu(book.getName()); //name menu of address book name
 
+        //all menu items
         JMenuItem select = new JMenuItem("Select");
         JMenuItem export = new JMenuItem("Export");
         JMenuItem exportS = new JMenuItem("Export Serial");
 
+        //adding to parent
         address.add(select);
         address.add(export);
         address.add(exportS);
 
+        //adding menu parent to menu bar
         menuBar.add(address);
 
+        //adding all action listeners
         export.addActionListener(this);
         select.addActionListener(this);
         exportS.addActionListener(this);
@@ -111,37 +148,61 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         //book.addBuddyInfo("Adina", "123mm", "2265543");
         //book.addBuddyInfo("Afjdj", "12344m", "223345543");
 
+        //update view for user
         revalidate();
         repaint();
     }
 
+    /**
+     * Method for creating new address book. Gets input from user on the name
+     * then call addressFunctionality to initialize address operations.
+     */
     private void createAddress() {
-        String name = JOptionPane.showInputDialog("Enter Name: ");
-        if (name != null && !name.trim().isEmpty()) {
+        String name = JOptionPane.showInputDialog("Enter Name: "); //user input
+
+        if (name != null && !name.trim().isEmpty()) { //ensure not empty input
             AddressBook book = new AddressBook(name);
             this.addressFunctionality(book);
         }
 
-
     }
 
+    /**
+     * Method that implemented for menu item to import an address book from a .txt file.
+     *
+     * @param filename Input name of file with full extension like file.txt.
+     * @param bookName String user inputs.
+     */
     private void importAddress(String filename, String bookName) {
-        AddressBook book = AddressBook.loadAddress(filename, bookName);
-        addressFunctionality(book);
-        displayInfo();
+        AddressBook book = AddressBook.loadAddress(filename, bookName); //calls static method
+        addressFunctionality(book); //initializes all operations
+        displayInfo(); //update view
     }
 
+    /**
+     * Method that implemented for menu item to import a serialized version of
+     * an address book.
+     *
+     * @param fileName full file name of serialized file.
+     * @param bookName String user input for name of address book.
+     */
     private void importSerialAddress(String fileName, String bookName) {
         try {
-            AddressBook book = AddressBook.loadAddressSerial(fileName, bookName);
-            addressFunctionality(book);
-            displayInfo();
+            AddressBook book = AddressBook.loadAddressSerial(fileName, bookName); //calls static method
+            addressFunctionality(book); //initializes all operations
+            displayInfo(); //update view
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
 
     }
 
+    /**
+     * All implementations for all the actions listeners for menu item.
+     * For add, remove, display, create, select, export, import, import serial, export serial.
+     *
+     * @param event the event to be processed
+     */
     @Override
     public void actionPerformed(ActionEvent event) {
 
@@ -194,6 +255,10 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Method implemented for the remove menu item to remove the selected BuddyInfo
+     * from the JList then updates view.
+     */
     private void remove() {
         JList<BuddyInfo> list = addressSelected.getBuddyList();
         BuddyInfo selected = (BuddyInfo) list.getSelectedValue();
