@@ -115,6 +115,13 @@ public class BuddyInfo implements Serializable {
         return buddyInfos;
     }
 
+    public String toXML() {
+        return "<buddyInfo>\n\t\t\t\t" +
+                "<name>" + this.getName() +"</name>\n\t\t\t\t" +
+                "<address>" + this.getAddress() + "</address>\n\t\t\t\t" +
+                "<phoneNumber>" + this.getPhoneNumber() + "</phoneNumber>\n\t\t\t</buddyInfo>";
+    }
+
     public static void main(String[] args) {
         BuddyInfo obj = new BuddyInfo("Homer", "Donut", "888-888-8888");
         System.out.println("Hello " + obj.getName());

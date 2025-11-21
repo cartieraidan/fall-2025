@@ -210,4 +210,33 @@ public class AddressBook extends DefaultListModel implements Serializable {
 
         }
     }
+
+    private String getBuddyXML() {
+        StringBuilder buddyXML = new StringBuilder();
+        for (int i = 0; i < buddyListModel.getSize(); i++) {
+            BuddyInfo buddy = (BuddyInfo) buddyListModel.get(i);
+            if (i == buddyListModel.getSize() - 1) {
+                buddyXML.append(buddy.toXML()).append("\n\t\t");
+            } else {
+                buddyXML.append(buddy.toXML()).append("\n\t\t\t");
+            }
+        }
+
+        return buddyXML.toString();
+    }
+
+    public String toXML() {
+        return "<addressBook>\n\t" +
+                "<addressBookName>" + this.getName() + "</addressBookName>\n\t\t" +
+                "<buddyInfos>\n\t\t\t" +
+                this.getBuddyXML() + "</buddyInfos>\n</addressBook>\n";
+    }
+
+    public static void main(String[] args) {
+        AddressBook book = new AddressBook("testBook");
+        book.addBuddyInfo("test1", "test2", "test3");
+        book.addBuddyInfo("test4", "test5", "test6");
+
+        System.out.println(book.toXML());
+    }
 }
