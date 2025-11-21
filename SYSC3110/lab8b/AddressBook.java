@@ -3,7 +3,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * Address book model for carrying a interactive list of BuddyInfo
+ * Address book model for carrying an interactive list of BuddyInfo
  *
  * @author Aidan Cartier
  * @version November 20, 2025
@@ -107,7 +107,7 @@ public class AddressBook extends DefaultListModel implements Serializable {
             file.close();
             System.out.println("Output saved to file");
 
-        } catch (IOException e) { //if could not open or create file
+        } catch (IOException e) { //if you could not open or create file
             System.out.println("error getting file");
             e.printStackTrace();
         }
@@ -140,43 +140,69 @@ public class AddressBook extends DefaultListModel implements Serializable {
     }
 
     /**
-     * 
+     * Static method that loads an address book from a .txt. Calls static method from BuddyInfo
+     * that returns a ArrayList of BuddyInfo which converts the toString output in instances.
      *
-     * @param filename
-     * @param bookName
-     * @return
+     * @param filename full file name of address book i.e. file.txt.
+     * @param bookName name you want to give to address book.
+     * @return instance of address book filed with BuddyInfo objects from file.
      */
     public static AddressBook loadAddress(String filename, String bookName) {
-        ArrayList<BuddyInfo> buddyInfos = new ArrayList<>();
-        AddressBook addressBook = new AddressBook(bookName);
+        AddressBook addressBook = new AddressBook(bookName); //returning this object
 
-        buddyInfos = BuddyInfo.importBuddyInfo(filename);
+        ArrayList<BuddyInfo> buddyInfos = BuddyInfo.importBuddyInfo(filename); //all BuddyInfo from text file
 
-        for (BuddyInfo buddyInfo : buddyInfos) {
+        for (BuddyInfo buddyInfo : buddyInfos) { //adding BuddyInfo to address book
             addressBook.addBuddyInfo(buddyInfo);
         }
 
         return addressBook;
     }
 
+    /**
+     * Method returns the actual list contributing to JList.
+     *
+     * @return DefaultListModel carried by address book.
+     */
     public DefaultListModel<BuddyInfo> getBuddyListModel() {
         return buddyListModel;
     }
 
+    /**
+     * Method to serialize the address book. Pass the DefaultListModel to method to
+     * be serialized and creates a binary file.
+     *
+     * @param list is the DefaultListModel of address book you want to export.
+     * @param filename Name of file you want it to output, no extension name needed.
+     * @throws IOException Exception if unable to create file.
+     */
     public static void serializeToFile(Object list, String filename) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(list);
         }
     }
 
-    //annotation to ignore casting safety
+    /**
+     * Method has same function as loadAddress except it has one extract feature to extract
+     * from a serialized file instead of a .txt.
+     * SuppressWarnings("unchecked") is for ignoring casting safety since we're assuming
+     * all serialized files we're passing are DefaultListModel of BuddyInfo.
+     *
+     * @param filename Full name of serialized file.
+     * @param name Name of address book.
+     * @return Instance of address book with BuddyInfo loaded from serialized file.
+     * @throws IOException Exception.
+     * @throws ClassNotFoundException Exception.
+     */
     @SuppressWarnings("unchecked")
     public static AddressBook loadAddressSerial(String filename, String name) throws IOException, ClassNotFoundException {
+        //try reading serialized file
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            //casting object in serial file
             DefaultListModel<BuddyInfo> list = (DefaultListModel<BuddyInfo>) ois.readObject();
             AddressBook book = new AddressBook(name);
 
-            for (int i = 0; i < list.getSize(); i++) {
+            for (int i = 0; i < list.getSize(); i++) { //adding elements to address book
                 book.addBuddyInfo(list.getElementAt(i));
             }
 
