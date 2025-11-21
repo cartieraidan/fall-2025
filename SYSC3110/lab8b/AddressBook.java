@@ -260,12 +260,26 @@ public class AddressBook extends DefaultListModel implements Serializable {
         book.addBuddyInfo("test1", "test2", "test3");
         book.addBuddyInfo("test4", "test5", "test6");
 
-        System.out.println(book.toXML());
+        //System.out.println(book.toXML());
 
+        /*
         try {
             AddressBook.exportToXmlFile(book, "outputXML");
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+         */
+
+        //this works
+        AddressBookXMLParser parser = new AddressBookXMLParser();
+        try {
+            ArrayList<BuddyInfo> temp = parser.readXMLFile("outputXML.xml");
+            for (BuddyInfo buddy: temp) {
+                System.out.println(buddy.toString());
+            }
+        } catch (IOException e) {
+            e.getMessage();
         }
     }
 }
