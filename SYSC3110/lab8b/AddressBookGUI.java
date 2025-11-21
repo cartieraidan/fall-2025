@@ -30,6 +30,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
     //private JMenuItem select;
     private JMenuItem importBook;
     private JMenuItem importSerial;
+    private JMenuItem importXML;
 
     /**
      *Constructor that creates JFrame initializes everything needed.
@@ -53,6 +54,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         create = new JMenuItem("Create");
         importBook = new JMenuItem("Import");
         importSerial = new JMenuItem("ImportSerial");
+        importXML = new JMenuItem("ImportXML");
 
         //adding to parent objects
         buddyOps.add(add);
@@ -61,6 +63,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         addressMenu.add(create);
         addressMenu.add(importBook);
         addressMenu.add(importSerial);
+        addressMenu.add(importXML);
 
         //adding parent objects to menu bar
         menuBar.add(buddyOps);
@@ -82,6 +85,7 @@ public class AddressBookGUI extends JFrame implements ActionListener {
         remove.addActionListener(this);
         importBook.addActionListener(this);
         importSerial.addActionListener(this);
+        importXML.addActionListener(this);
     }
 
     /**
@@ -198,6 +202,23 @@ public class AddressBookGUI extends JFrame implements ActionListener {
     }
 
     /**
+     *
+     *
+     * @param filename name of file must have full extension name i.e. file.xml
+     */
+    private void importFromXmlFile(String filename) {
+        AddressBookXMLParser parser = new AddressBookXMLParser();
+        try {
+            AddressBook temp = parser.readXMLFileOutAddress(filename);
+
+            addressFunctionality(temp); //initializes all operations
+            displayInfo(); //update view
+        } catch (IOException e) {
+            e.getMessage();
+        }
+    }
+
+    /**
      * All implementations for all the actions listeners for menu item.
      * For add, remove, display, create, select, export, import, import serial, export serial.
      *
@@ -228,7 +249,10 @@ public class AddressBookGUI extends JFrame implements ActionListener {
             String fileName = JOptionPane.showInputDialog("Enter File Name: ");
 
             importSerialAddress(fileName, bookName);
-        }else if (event.getSource() instanceof JMenuItem item) {
+        } else if (event.getSource() == importXML) {
+            String input = JOptionPane.showInputDialog("Enter File Name(full name with .xml): ");
+            importFromXmlFile(input.trim());
+        } else if (event.getSource() instanceof JMenuItem item) {
             if (item.getText().equals("Select")) {
                 //JMenuItem selected = (JMenuItem) event.getSource();
                 JMenu parent = (JMenu) ((JPopupMenu) item.getParent()).getInvoker();

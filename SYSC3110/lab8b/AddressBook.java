@@ -289,6 +289,7 @@ public class AddressBook extends DefaultListModel implements Serializable {
 
          */
 
+        /*
         AddressBookXMLParser parser = new AddressBookXMLParser();
         try {
             AddressBook temp = parser.readXMLFileOutAddress("outputXML.xml");
@@ -302,5 +303,7 @@ public class AddressBook extends DefaultListModel implements Serializable {
         } catch (IOException e) {
             e.getMessage();
         }
+
+         */
     }
 }
