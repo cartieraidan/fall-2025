@@ -520,6 +520,10 @@ public class GameManager {
             offset = (playerCards.getPreferredSize().width - 180) / currentPlayerHand.size();
         }
 
+        if (currentPlayer instanceof AiPlayer) { //clears UI hand for Ai player
+            //((AiPlayer) currentPlayer).updateUIHand();
+        }
+
         //main loop creates buttons and adds to JPanel
         for (int i = 0; i < currentPlayerHand.size(); i++) {
             JButton buttonCard = new JButton();
@@ -540,12 +544,16 @@ public class GameManager {
             //setting style of card/JButton
             buttonCard = setCardStyle(buttonCard, currentPlayerHand.get(i));
 
-
             playerCards.add(buttonCard); //add to JPanel
             playerCards.setComponentZOrder(buttonCard, i); //set z layer order by index
             addButtonZ(buttonCard, i); //add to Map for dynamically changing z layer and reverting
 
 
+        }
+
+        if (currentPlayer instanceof AiPlayer) { //if current player is AI, extra logic
+            ((AiPlayer) currentPlayer).updateUIHand(view); //gets all UI buttons from view
+            //((AiPlayer) currentPlayer).testHand(); //for testing
         }
 
         drawLogic(); //handles extra game logic after all cards are loaded into game
