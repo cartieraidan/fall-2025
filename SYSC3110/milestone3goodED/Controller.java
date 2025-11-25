@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * The Controller class manages the state and flow of the GUI UNO game.
- * Controller most of the game flow from interactions with the GUI and handle the logic to handle the.
+ * Controller most of the game flow from interactions with the GUI and handle the logic to handle.
  *
  *
  * @author Aidan Cartier

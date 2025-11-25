@@ -13,7 +13,7 @@ public class Player {
     private final String name;
     private final List<Card> hand;
     private int score;
-    private boolean isAI;
+
 
     /**
      * Initializes a player with a given name.
@@ -24,7 +24,7 @@ public class Player {
         this.name = name;
         this.hand = new ArrayList<>();
         this.score = 0;
-        this.isAI = false;
+
     }
 
     /**
@@ -142,24 +142,6 @@ public class Player {
             }
         }
         return false;
-    }
-
-    /**
-     * Sets the player to be AI or not AI.
-     *
-     * @param isAI True if player is AI, false if player is not AI
-     */
-    public void setAI(boolean isAI) {
-        this.isAI = isAI;
-    }
-
-    /**
-     * Returns whether the player is AI
-     *
-     * @return true if the player is AI
-     */
-    public boolean isAI() {
-        return isAI;
     }
 
     /**

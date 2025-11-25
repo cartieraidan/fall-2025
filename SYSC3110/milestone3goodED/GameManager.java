@@ -819,23 +819,55 @@ public class GameManager {
     }
 
     /**
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * Edit this bruuuuuuuuuuuuh so stupid
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
      * Initializes player classes for the GameManager, requiring player name, and whether they are AI.
      */
     private void getPlayerSettings() {
         for(int i = 0; i < playerCount; i++){
             String name = JOptionPane.showInputDialog("Enter the name of the player " + (i + 1) + ": ");
-            Player p = new Player(name);
-            String isAI = "";
+            //Player p = new Player(name);
 
-            isAI = JOptionPane.showInputDialog("Is player" + (i + 1) + " a player or AI(Player, AI): ");
-            while(!(isAI.equals("AI") || isAI.equals("Player"))) {
-                JOptionPane.showMessageDialog(null,"Invalid command. Enter Player or AI.");
-                isAI = JOptionPane.showInputDialog("Is " + (i + 1) + " a player or AI(Player, AI): ");
+            Object[] options = {"YES", "NO"};
+            JPanel promptAi = new JPanel();
+            promptAi.add(new JLabel("Is this player AI?"));
+
+            int result = JOptionPane.showOptionDialog(null, promptAi, "Is This Player AI?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
+            if (result == JOptionPane.YES_OPTION) {
+                players.add(new AiPlayer(name));
+            } else {
+                players.add(new Player(name));
             }
 
-            p.setAI(isAI.equals("AI"));
-
-            players.add(p); //add to ArrayList
         }
     }
 
