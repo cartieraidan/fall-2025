@@ -554,6 +554,7 @@ public class GameManager {
         if (currentPlayer instanceof AiPlayer) { //if current player is AI, extra logic
             ((AiPlayer) currentPlayer).updateUIHand(view, this.topDiscard()); //gets all UI buttons from view
             ((AiPlayer) currentPlayer).testPlayableCards(); //for testing
+            ((AiPlayer) currentPlayer).testBestCard(); //for testing
         }
 
         drawLogic(); //handles extra game logic after all cards are loaded into game

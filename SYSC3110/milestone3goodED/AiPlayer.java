@@ -11,11 +11,13 @@ public class AiPlayer extends Player {
 
     private ArrayList<JButton> uiHand;
     private ArrayList<Integer> playableCards;
+    private int bestCard;
 
     public AiPlayer(String name) {
         super(name);
         uiHand = new ArrayList<>();
         playableCards = new ArrayList<>();
+        bestCard = -1;
     }
 
     public AiPlayer() {
@@ -35,6 +37,9 @@ public class AiPlayer extends Player {
         playableCards.clear(); //clear playable cards
 
         this.playableCards(card);
+        if (!(playableCards.isEmpty())) { //finding best card if you have cards to play
+            this.findBestCard();
+        }
 
         JPanel cardContainer = view.getPlayerCards(); //where UI buttons stored in view
         Component[] comp = cardContainer.getComponents(); //get all buttons
@@ -47,9 +52,43 @@ public class AiPlayer extends Player {
     }
 
     /**
-     * Update the Arraylist to specify which cards are playable to AI player
+     * Gets the best hand out of players hand
      *
-     * @param discardedCard Top card on the discard pile
+     * @return Card it will play.
+     */
+    public Card getBestCard() {
+        if (bestCard == -1) {
+            return null;
+        } else {
+            return gethand().get(playableCards.get(bestCard));
+        }
+    }
+
+    /**
+     * Finds the best card value in playable cards. Updates an int value, which is the card index
+     * in players hand.
+     */
+    private void findBestCard() {
+        if (playableCards.size() == 1) {
+            bestCard = 0;
+        } else {
+            bestCard = 0;
+
+            for (int i = 1; i < playableCards.size(); i++) {
+                int bestCardIndex = playableCards.get(bestCard);
+                int currentCardIndex = playableCards.get(i);
+
+                if (gethand().get(bestCardIndex).getValue() < gethand().get(currentCardIndex).getValue()) {
+                    bestCard = i;
+                }
+            }
+        }
+    }
+
+    /**
+     * Update the Arraylist to specify which cards are playable to AI player.
+     *
+     * @param discardedCard Top card on the discard pile.
      */
     private void playableCards(Card discardedCard) {
         for (Card card : gethand()) {
@@ -70,5 +109,9 @@ public class AiPlayer extends Player {
         for (int i : playableCards) {
             System.out.println("playble cards: " + gethand().get(i).toString());
         }
+    }
+
+    public void testBestCard() {
+        System.out.println("best card to play: " + gethand().get(playableCards.get(bestCard)).toString());
     }
 }
