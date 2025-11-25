@@ -552,8 +552,8 @@ public class GameManager {
         }
 
         if (currentPlayer instanceof AiPlayer) { //if current player is AI, extra logic
-            ((AiPlayer) currentPlayer).updateUIHand(view); //gets all UI buttons from view
-            //((AiPlayer) currentPlayer).testHand(); //for testing
+            ((AiPlayer) currentPlayer).updateUIHand(view, this.topDiscard()); //gets all UI buttons from view
+            ((AiPlayer) currentPlayer).testPlayableCards(); //for testing
         }
 
         drawLogic(); //handles extra game logic after all cards are loaded into game
@@ -827,37 +827,6 @@ public class GameManager {
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     * Edit this bruuuuuuuuuuuuh so stupid
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
      * Initializes player classes for the GameManager, requiring player name, and whether they are AI.
      */
     private void getPlayerSettings() {
