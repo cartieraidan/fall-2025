@@ -12,11 +12,11 @@ public class CardTest {
 
     @BeforeEach
     void setUp(){
-        red5 = new Card(CardColour.RED, CardColour.BROWN, CardType.NUMBER, CardType.NUMBER, 5);
-        redSkip = new Card(CardColour.RED, CardColour.BROWN, CardType.SKIP, CardType.SKIP_EVERYONE, -1);
-        blue5 = new Card(CardColour.BLUE, CardColour.PURPLE, CardType.NUMBER, CardType.NUMBER, 5);
-        wild = new Card(CardColour.WILD, CardColour.WILD, CardType.WILD, CardType.WILD, -1);
-        wildDrawTwo = new Card(CardColour.WILD, CardColour.WILD, CardType.WILD_DRAW_TWO, CardType.WILD_DRAW_COLOR, -1);
+        red5 = new Card(CardColour.RED, CardColour.BROWN, CardType.NUMBER, CardType.NUMBER, 5, 5);
+        redSkip = new Card(CardColour.RED, CardColour.BROWN, CardType.SKIP, CardType.SKIP_EVERYONE, 20, 30);
+        blue5 = new Card(CardColour.BLUE, CardColour.PURPLE, CardType.NUMBER, CardType.NUMBER, 5, 5);
+        wild = new Card(CardColour.WILD, CardColour.WILD, CardType.WILD, CardType.WILD, 40, 40);
+        wildDrawTwo = new Card(CardColour.WILD, CardColour.WILD, CardType.WILD_DRAW_TWO, CardType.WILD_DRAW_COLOR, 50, 60);
         nullCard = null;
     }
 
@@ -45,7 +45,7 @@ public class CardTest {
 
     @Test
     void testMatches_SameType(){
-       Card greenSkip = new Card(CardColour.GREEN, CardColour.ORANGE, CardType.SKIP, CardType.SKIP_EVERYONE, -1);
+       Card greenSkip = new Card(CardColour.GREEN, CardColour.ORANGE, CardType.SKIP, CardType.SKIP_EVERYONE, 20, 30);
        assertTrue(redSkip.matches(greenSkip));
     }
 
@@ -62,7 +62,7 @@ public class CardTest {
 
     @Test
     void testMatches_NoMatch(){
-       Card green9 =new Card(CardColour.GREEN, CardColour.TEAL, CardType.NUMBER, CardType.NUMBER, 9);
+       Card green9 =new Card(CardColour.GREEN, CardColour.TEAL, CardType.NUMBER, CardType.NUMBER, 9, 9);
        assertFalse(red5.matches(green9));
     }
 

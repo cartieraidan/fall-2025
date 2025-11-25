@@ -12,10 +12,9 @@ public class Card {
     private CardType lightType;
     private CardType darkType;
     private CardSide side;
+    private int lightValue;
+    private int darkValue;
 
-    //private CardColour colour;
-    //private CardType type;
-    private int value;
 
     /**
      * Constructs a new Card with the specified colour, type, and value.
@@ -24,14 +23,16 @@ public class Card {
      * @param darkColour the dark colour of card
      * @param lightType the light type of card
      * @param darkType the dark type of card
-     * @param value the numeric value of the card. -1 for non-number cards.
+     * @param lightValue the numeric value of the card. -1 for non-number cards.
+     * @param darkValue the numeric value of the card. -1 for non-number cards.
      */
-    public Card(CardColour lightColour, CardColour darkColour, CardType lightType, CardType darkType, int value){
+    public Card(CardColour lightColour, CardColour darkColour, CardType lightType, CardType darkType, int lightValue, int darkValue) {
         this.lightColour = lightColour;
         this.darkColour = darkColour;
         this.lightType = lightType;
         this.darkType = darkType;
-        this.value = value;
+        this.lightValue = lightValue;
+        this.darkValue = darkValue;
         this.side = CardSide.LIGHT;
     }
 
@@ -75,7 +76,7 @@ public class Card {
     
     /** The numeric value of this card, returns -1 for non-number cards. */
     public int getValue(){
-        return value;
+        return (this.side == CardSide.LIGHT) ? lightValue : darkValue;
     }
 
     /**
@@ -92,6 +93,7 @@ public class Card {
 
         CardType type = this.getType();
         CardColour colour = this.getColour();
+        int value = this.getValue();
 
         //flip must match color
         if (type == CardType.FLIP && colour == other.getColour()) {
@@ -107,7 +109,7 @@ public class Card {
         }
         //if both are number compare value
         if (type == CardType.NUMBER && other.getType() == CardType.NUMBER){
-            return this.value == other.getValue();
+            return value == other.getValue();
         }
 
         //Match by type
@@ -127,6 +129,7 @@ public class Card {
     public String toString(){
         CardType type = this.getType();
         CardColour colour = this.getColour();
+        int value = this.getValue();
 
         if (type == CardType.NUMBER){
             return colour + " " + value;

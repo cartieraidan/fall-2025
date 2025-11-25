@@ -45,7 +45,7 @@ public class Deck {
                     //set value to 0-9
                     value = i;
                     //for numbers only
-                    cards.add(new Card(CardColour.values()[j], CardColour.values()[j + 5], CardType.values()[type], CardType.values()[type],value));
+                    cards.add(new Card(CardColour.values()[j], CardColour.values()[j + 5], CardType.values()[type], CardType.values()[type],value, value));
                 }
                 else {
                     //set type to reverse, skip, or draw one
@@ -53,14 +53,14 @@ public class Deck {
                     //set value to 10 for draw one and 20 for reverse and skip
                     if(type == 3) { //draw one
                         value = 10;
-                        cards.add(new Card(CardColour.values()[j], CardColour.values()[j + 5], CardType.values()[type], CardType.DRAW_FIVE, value));
+                        cards.add(new Card(CardColour.values()[j], CardColour.values()[j + 5], CardType.values()[type], CardType.DRAW_FIVE, value, 20));
                     }
                     else { //reverse and skip
                         value = 20;
                         if (type == 1) { //reverse
-                            cards.add(new Card(CardColour.values()[j], CardColour.values()[j + 5], CardType.values()[type], CardType.values()[type], value));
+                            cards.add(new Card(CardColour.values()[j], CardColour.values()[j + 5], CardType.values()[type], CardType.values()[type], value, value));
                         } else { //skip
-                            cards.add(new Card(CardColour.values()[j], CardColour.values()[j + 5], CardType.values()[type], CardType.SKIP_EVERYONE, value));
+                            cards.add(new Card(CardColour.values()[j], CardColour.values()[j + 5], CardType.values()[type], CardType.SKIP_EVERYONE, value, 30));
                         }
                     }
                 }
@@ -71,16 +71,16 @@ public class Deck {
 
         //create four of each wild card
         for (int i = 0 ; i <= 3 ; i++) {
-            cards.add(new Card(CardColour.WILD, CardColour.WILD, CardType.WILD, CardType.WILD, 40));
-            cards.add(new Card(CardColour.WILD, CardColour.WILD, CardType.WILD_DRAW_TWO, CardType.WILD_DRAW_COLOR, 50));
+            cards.add(new Card(CardColour.WILD, CardColour.WILD, CardType.WILD, CardType.WILD, 40, 40));
+            cards.add(new Card(CardColour.WILD, CardColour.WILD, CardType.WILD_DRAW_TWO, CardType.WILD_DRAW_COLOR, 50, 60));
         }
 
         //adding flip cards
         for (int i = 0; i < 2; i++) {
-            cards.add(new Card(CardColour.RED, CardColour.BROWN, CardType.FLIP, CardType.FLIP, 20));
-            cards.add(new Card(CardColour.BLUE, CardColour.PURPLE, CardType.FLIP, CardType.FLIP, 20));
-            cards.add(new Card(CardColour.GREEN, CardColour.TEAL, CardType.FLIP, CardType.FLIP, 20));
-            cards.add(new Card(CardColour.YELLOW, CardColour.ORANGE, CardType.FLIP, CardType.FLIP, 20));
+            cards.add(new Card(CardColour.RED, CardColour.BROWN, CardType.FLIP, CardType.FLIP, 20, 20));
+            cards.add(new Card(CardColour.BLUE, CardColour.PURPLE, CardType.FLIP, CardType.FLIP, 20, 20));
+            cards.add(new Card(CardColour.GREEN, CardColour.TEAL, CardType.FLIP, CardType.FLIP, 20, 20));
+            cards.add(new Card(CardColour.YELLOW, CardColour.ORANGE, CardType.FLIP, CardType.FLIP, 20, 20));
         }
 
         //shuffle the deck

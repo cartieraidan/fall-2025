@@ -864,8 +864,10 @@ public class GameManager {
             int result = JOptionPane.showOptionDialog(null, promptAi, "Is This Player AI?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
             if (result == JOptionPane.YES_OPTION) {
                 players.add(new AiPlayer(name));
+                System.out.println("added AI player");
             } else {
                 players.add(new Player(name));
+                System.out.println("added normal player");
             }
 
         }

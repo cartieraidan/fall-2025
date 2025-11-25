@@ -57,22 +57,22 @@ public class PlayerTest {
 
     @Test
     void testHandValueCalculation() {
-        player.gethand().add(new Card(CardColour.RED, CardColour.BROWN, CardType.NUMBER, CardType.NUMBER, 5));
-        player.gethand().add(new Card(CardColour.BLUE, CardColour.PURPLE, CardType.DRAW_ONE, CardType.DRAW_ONE, 10));
+        player.gethand().add(new Card(CardColour.RED, CardColour.BROWN, CardType.NUMBER, CardType.NUMBER, 5, 5));
+        player.gethand().add(new Card(CardColour.BLUE, CardColour.PURPLE, CardType.DRAW_ONE, CardType.DRAW_ONE, 10, 10));
         assertEquals(15, player.gethandValue());
     }
 
     @Test
     void testHasPlayableCardTrue() {
-        Card top = new Card(CardColour.RED, CardColour.BROWN, CardType.NUMBER, CardType.NUMBER, 3);
-        player.gethand().add(new Card(CardColour.RED, CardColour.BROWN, CardType.NUMBER, CardType.NUMBER, 7));
+        Card top = new Card(CardColour.RED, CardColour.BROWN, CardType.NUMBER, CardType.NUMBER, 3, 3);
+        player.gethand().add(new Card(CardColour.RED, CardColour.BROWN, CardType.NUMBER, CardType.NUMBER, 7, 7));
         assertTrue(player.hasPlayableCard(top));
     }
 
     @Test
     void testHasPlayableCardFalse() {
-        Card top = new Card(CardColour.GREEN, CardColour.TEAL, CardType.NUMBER, CardType.NUMBER, 3);
-        player.gethand().add(new Card(CardColour.RED, CardColour.BROWN, CardType.SKIP, CardType.SKIP_EVERYONE, 20));
+        Card top = new Card(CardColour.GREEN, CardColour.TEAL, CardType.NUMBER, CardType.NUMBER, 3, 3);
+        player.gethand().add(new Card(CardColour.RED, CardColour.BROWN, CardType.SKIP, CardType.SKIP_EVERYONE, 20, 30));
         assertFalse(player.hasPlayableCard(top));
     }
 

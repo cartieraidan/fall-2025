@@ -47,7 +47,7 @@ public class DeckTest {
 
     @Test
     void testAddCard_IncreasesDeckSize() {
-        Card card = new Card(CardColour.RED, CardColour.BROWN, CardType.NUMBER, CardType.NUMBER, 5);
+        Card card = new Card(CardColour.RED, CardColour.BROWN, CardType.NUMBER, CardType.NUMBER, 5, 5);
         int initialSize = deck.size();
         deck.addCard(card);
         assertEquals(initialSize + 1, deck.size(), "Adding a card should increase deck size by one.");
@@ -57,8 +57,8 @@ public class DeckTest {
     @Test
     void testAddAll_AddsMultipleCards() {
         List<Card> newCards = new ArrayList<>();
-        newCards.add(new Card(CardColour.BLUE, CardColour.PURPLE, CardType.SKIP, CardType.SKIP_EVERYONE, 20));
-        newCards.add(new Card(CardColour.GREEN, CardColour.TEAL, CardType.REVERSE, CardType.REVERSE, 20));
+        newCards.add(new Card(CardColour.BLUE, CardColour.PURPLE, CardType.SKIP, CardType.SKIP_EVERYONE, 20, 30));
+        newCards.add(new Card(CardColour.GREEN, CardColour.TEAL, CardType.REVERSE, CardType.REVERSE, 20, 20));
 
         int initialSize = deck.size();
         deck.addAll(newCards);
