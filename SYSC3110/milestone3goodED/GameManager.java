@@ -852,18 +852,7 @@ public class GameManager {
         }
     }
 
-    /**
-     * Handles the AI logic for AI players.
-     */
-    public void handleAI() {
-        Player currentPlayer = players.get(currentPlayerIndex);
-
-        if(currentPlayer.isAI()) {
-            if(!currentPlayer.hasPlayableCard(deck.peekCard())) {
-
-            }
-        }
-    }
+    
 }
 
 
