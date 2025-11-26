@@ -21,7 +21,7 @@ public class GameManager {
     private UnoView view;
     private boolean drawCard = false;
     private boolean roundOver;
-    private List<Card> currentPlayerHand;
+    //private List<Card> getCurrentPlayer().gethand();
     private Map<JButton, Integer> prevCardZ; //used for tracking button prev z
     private boolean wildDraw = false; //Used for draw colour loop, true if card played
     private CardColour wildDrawColour; //for colour of card in draw loop
@@ -130,9 +130,28 @@ public class GameManager {
         currentPlayerIndex = (currentPlayerIndex + direction + players.size()) % players.size();
         cardDrawBug = false;
         drawCard = false;
+
+        updateView();
+        gameState("nextTurn()", "null");
     }
 
+    public void gameState(String state, String message) {
+        System.out.println("------------------------------------------\n" +
+                "Current game state" +
+                "\nCurrent player: " + getCurrentPlayer().getName() +
+                "\nCalled after: " + state  +
+                "\nCurrent hand size: " + getCurrentPlayer().gethand().size() +
+                "\nHas playable card: " + getCurrentPlayer().hasPlayableCard(topDiscard()) +
+                "\nHas drawn a card: " + drawCard +
+                "\nCurrent hand: ");
 
+        for (Card card : getCurrentPlayer().gethand()) {
+            System.out.println(card.toString());
+        }
+
+        System.out.println("Any Message: " + message +
+                "\n------------------------------------------");
+    }
 
     /**
      * Attempt to play a card on behalf of the current player
@@ -143,27 +162,28 @@ public class GameManager {
         if (selectedCard == null) {
             JOptionPane.showMessageDialog(null, "No card selected.");
         } else {
-            Card card = currentPlayerHand.get((int) selectedCard.getClientProperty("index")); //get card from button hidden index
+            Card card = getCurrentPlayer().gethand().get((int) selectedCard.getClientProperty("index")); //get card from button hidden index
 
             if (card.getType() == CardType.FLIP) { //player plays flip card
-                currentPlayerHand.remove(card); //remove card played from list
+                getCurrentPlayer().gethand().remove(card); //remove card played from list
                 checkWinner();
                 handleFlipCard(card);
 
             } else if (card.getType() == CardType.WILD || card.getType() == CardType.WILD_DRAW_TWO || card.getType() == CardType.WILD_DRAW_COLOR) {
                 //wild requires an input so controller has to take care of it
-                currentPlayerHand.remove(card);
+                getCurrentPlayer().gethand().remove(card);
                 checkWinner();
                 handleWildCard(card);
 
             } else {
                 //check if the move is valid
                 if (checkvalidMove(card)) {
-                    currentPlayerHand.remove(card); //remove card played from list, never implemented in game manager?
+                    getCurrentPlayer().gethand().remove(card); //remove card played from list, never implemented in game manager?
                     checkWinner();
                     discardPile.push(card);
                     handleActionCard(card);
 
+                    updateView();
                     return true;
                 }
             }
@@ -216,6 +236,8 @@ public class GameManager {
             p.drawCard(deck);
             updatePlayerCards();
         }
+
+        updateView();
     }
 
     /**
@@ -319,7 +341,7 @@ public class GameManager {
 
             //case for wild draw two cards
             if (card.getType() == CardType.WILD_DRAW_TWO) {
-                System.out.println("draw two happened");
+                //System.out.println("draw two happened");
                 getCurrentPlayer().drawCard(getDeck());
                 getCurrentPlayer().drawCard(getDeck());
                 nextTurn();
@@ -479,20 +501,65 @@ public class GameManager {
      */
     private void drawLogic() {
 
+        System.out.println("draw logic called");
         if (!wildDraw) {
             if (!cardDrawBug && !getCurrentPlayer().hasPlayableCard(topDiscard())) {
-                JOptionPane.showMessageDialog(null, "No playable cards. You must draw.");
-                draw.setEnabled(true);
+                if ((getCurrentPlayer() instanceof AiPlayer) && !drawCard) {
+                    drawCard();
+                    System.out.println("AI player has no moves must draw");
+                } else if (!drawCard) { //only enable if you haven't drawn card
+                    JOptionPane.showMessageDialog(null, "No playable cards. You must draw.");
+                    System.out.println("player enable draw button");
+                    draw.setEnabled(true);
+                }
+
             }
         }
 
+        //update for AI to just skip turn or go play a card///////////////
+        // After drawing, check if they can play now
+        if (!getWildDrawLoop()) { //does not break draw colour loop
+            if (!getCurrentPlayer().hasPlayableCard(topDiscard()) && drawCard) {
+                JOptionPane.showMessageDialog(null, "Still no playable cards. Turn skipped.");
+                setBool(false);
+                setButtonBool(false);
+                nextTurn();
+                //gameManager.updateView();
+
+                if (getCurrentPlayer() instanceof AiPlayer) { //this kinda worked but it needs to be fixed
+                    //need to edit so drawLogic only gets called one time during turn or something
+                    drawLogic();
+                }
+
+            } else if (drawCard) {
+                if (getCurrentPlayer() instanceof AiPlayer) {
+                    this.handleAiPlay();
+                } else {
+                    JOptionPane.showMessageDialog(null, "You may now play your new card if possible.");
+                }
+                setButtonBool(false);
+            }
+        }
+
+    }
+
+    private void handleAiPlay() {
+        JButton cardPlayed = ((AiPlayer) getCurrentPlayer()).tryToPlay();
+        System.out.println("AI played after draw: " + getCurrentPlayer().gethand().get((int)cardPlayed.getClientProperty("index")).toString());
+        selectedCard = cardPlayed;
+        this.playCard();
+        selectedCard = null;
+
+        updateView();
     }
 
     /**
      * Update view 3 major components. Most recurring piece of code.
      */
     public void updateView() {
-        updatePlayerCards();
+        if (!drawCard) {
+            updatePlayerCards();
+        }
         updateCurrentPlayer();
         updateDiscardPile();
     }
@@ -504,7 +571,7 @@ public class GameManager {
      */
     public void updatePlayerCards() {
         Player currentPlayer = getCurrentPlayer();
-        currentPlayerHand = currentPlayer.gethand(); //get current hand by player
+        //getCurrentPlayer().gethand() = currentPlayer.gethand(); //get current hand by player
 
         JPanel playerCards = getPlayerCards(); //get player card/JButton JPanel
 
@@ -517,7 +584,7 @@ public class GameManager {
         if (currentPlayer.gethand().isEmpty()) { //error out if hand empty
             checkWinner();
         } else {
-            offset = (playerCards.getPreferredSize().width - 180) / currentPlayerHand.size();
+            offset = (playerCards.getPreferredSize().width - 180) / getCurrentPlayer().gethand().size();
         }
 
         if (currentPlayer instanceof AiPlayer) { //clears UI hand for Ai player
@@ -525,7 +592,7 @@ public class GameManager {
         }
 
         //main loop creates buttons and adds to JPanel
-        for (int i = 0; i < currentPlayerHand.size(); i++) {
+        for (int i = 0; i < getCurrentPlayer().gethand().size(); i++) {
             JButton buttonCard = new JButton();
 
             buttonCard.setBounds(
@@ -542,7 +609,7 @@ public class GameManager {
             view.addButtonCard(buttonCard);
 
             //setting style of card/JButton
-            buttonCard = setCardStyle(buttonCard, currentPlayerHand.get(i));
+            buttonCard = setCardStyle(buttonCard, getCurrentPlayer().gethand().get(i));
 
             playerCards.add(buttonCard); //add to JPanel
             playerCards.setComponentZOrder(buttonCard, i); //set z layer order by index
@@ -553,8 +620,8 @@ public class GameManager {
 
         if (currentPlayer instanceof AiPlayer) { //if current player is AI, extra logic
             ((AiPlayer) currentPlayer).updateUIHand(view, this.topDiscard()); //gets all UI buttons from view
-            ((AiPlayer) currentPlayer).testPlayableCards(); //for testing
-            ((AiPlayer) currentPlayer).testBestCard(); //for testing
+            //((AiPlayer) currentPlayer).testPlayableCards(); //for testing
+            //((AiPlayer) currentPlayer).testBestCard(); //for testing
         }
 
         drawLogic(); //handles extra game logic after all cards are loaded into game
@@ -818,7 +885,7 @@ public class GameManager {
      * @param selectedCard selected button from event.
      */
     private void playableCard(JButton selectedCard) {
-        Card card = currentPlayerHand.get((int) selectedCard.getClientProperty("index")); //get card from button hidden index
+        Card card = getCurrentPlayer().gethand().get((int) selectedCard.getClientProperty("index")); //get card from button hidden index
         if (checkvalidMove(card)) {
             play.setEnabled(true);
         } else {

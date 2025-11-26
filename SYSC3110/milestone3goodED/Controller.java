@@ -198,19 +198,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
             }
 
 
-            // After drawing, check if they can play now
-            if (!gameManager.getWildDrawLoop()) { //does not break draw colour loop
-                if (!player.hasPlayableCard(gameManager.topDiscard())) {
-                    JOptionPane.showMessageDialog(null, "Still no playable cards. Turn skipped.");
-                    gameManager.setBool(false);
-                    gameManager.setButtonBool(false);
-                    gameManager.nextTurn();
-                    //gameManager.updateView();
-                } else {
-                    JOptionPane.showMessageDialog(null, "You may now play your new card if possible.");
-                    gameManager.setButtonBool(false);
-                }
-            }
+
 
             gameManager.updateView();
         }

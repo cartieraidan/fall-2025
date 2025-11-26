@@ -41,7 +41,7 @@ public class Player {
      *
      * @param deck the deck to draw from
      */
-    public void drawCard(Deck deck){
+    public void drawCard(Deck deck) {
         Card c = deck.drawCard();
         if (c != null){
             hand.add(c);

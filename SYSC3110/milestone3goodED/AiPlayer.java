@@ -24,6 +24,22 @@ public class AiPlayer extends Player {
         this("AI Player");
     }
 
+    @Override
+    public void drawCard(Deck deck) {
+        Card c = deck.drawCard();
+        if (c != null){
+            gethand().add(c);
+        }
+
+    }
+
+    //gets called after AI gets called to draw
+    //other ai functions should have been called to initialize all current data
+    //function will only be called when AI has draw card and it able to play it
+    public JButton tryToPlay() {
+        return uiHand.get(playableCards.get(bestCard));
+    }
+
     /**
      * Method clears its previous hand and updates it from getting the JPanel in view
      * and getting all the components (JButtons).
