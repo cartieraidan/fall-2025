@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<project name="AddressBook" default="packaging" basedir=".">
+    <property name="class.dir" value="out/production/SYSC3110Lab9"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="jar.name" value="AddressBook.jar"/>
+
+    <target name="packaging">
+        <mkdir dir="${dist.dir}"/>
+
+        <jar destfile="${dist.dir}/${jar.name}" basedir="${class.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="AddressBookGUI"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="packaging">
+        <java jar="${dist.dir}/${jar.name}" fork="true"/>
+    </target>
+
+</project>
