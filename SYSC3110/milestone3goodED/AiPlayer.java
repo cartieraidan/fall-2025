@@ -1,8 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
+ * Child of Player which implements more functions imitating a Player.
+ * And still use the same methods as Player so don't have to change GameManager too much.
  *
  * @author Aidan Cartier
  * @version November 25, 2025
@@ -13,6 +17,11 @@ public class AiPlayer extends Player {
     private ArrayList<Integer> playableCards;
     private int bestCard;
 
+    /**
+     * Constructs an AI player to play UNO.
+     *
+     * @param name name of player
+     */
     public AiPlayer(String name) {
         super(name);
         uiHand = new ArrayList<>();
@@ -20,22 +29,20 @@ public class AiPlayer extends Player {
         bestCard = -1;
     }
 
+    /**
+     * Constructor chaining if AI created without name.
+     */
     public AiPlayer() {
         this("AI Player");
     }
 
-    @Override
-    public void drawCard(Deck deck) {
-        Card c = deck.drawCard();
-        if (c != null){
-            gethand().add(c);
-        }
-
-    }
-
-    //gets called after AI gets called to draw
-    //other ai functions should have been called to initialize all current data
-    //function will only be called when AI has draw card and it able to play it
+    /**
+     * updateUIHand() must be called before this function in order
+     * to get an update AI hand of all cards playable.
+     * Returns JButton emulating if a player selected a card to play.
+     *
+     * @return JButton of card it wishes to play.
+     */
     public JButton tryToPlay() {
         return uiHand.get(playableCards.get(bestCard));
     }
@@ -94,6 +101,7 @@ public class AiPlayer extends Player {
                 int bestCardIndex = playableCards.get(bestCard);
                 int currentCardIndex = playableCards.get(i);
 
+                //can swap value to play big cards last by swapping "<" with ">"
                 if (gethand().get(bestCardIndex).getValue() < gethand().get(currentCardIndex).getValue()) {
                     bestCard = i;
                 }
@@ -113,6 +121,55 @@ public class AiPlayer extends Player {
             }
         }
 
+    }
+
+    /**
+     * Get the colour the AI chooses when it plays a wild card.
+     *
+     * @return CardColour for card played.
+     */
+    public CardColour getWildColour() {
+        return calculateBestColour();
+    }
+
+
+    /**
+     * Finds which colour is the highest and chooses it
+     * for the wild card.
+     *
+     * @return CardColour for card played.
+     */
+    private CardColour calculateBestColour() {
+        Map<CardColour, Integer> colourMap = new HashMap<>(); //CardColour as key and int for tracking
+
+        for (Card card : gethand()) { //adding colours to hashMap
+            if (card.getColour() != CardColour.WILD) { //don't want the colour WILD
+                if (colourMap.containsKey(card.getColour())) { //if already in Map
+                    colourMap.put(card.getColour(), colourMap.get(card.getColour()) + 1);
+
+                } else { //if not in Map already
+                    colourMap.put(card.getColour(), 1);
+
+                }
+            }
+        }
+
+        System.out.println("colourMap: " + colourMap);
+
+        //Choosing colour from HashMap
+        CardColour chosenColour = null;
+        for (CardColour colour : colourMap.keySet()) {
+            if (chosenColour == null) { //for initial pick
+                chosenColour = colour;
+
+            } else { //comparing counts
+                if (colourMap.get(chosenColour) < colourMap.get(colour)) {
+                    chosenColour = colour;
+                }
+            }
+        }
+
+        return chosenColour;
     }
 
     public void testHand() {
