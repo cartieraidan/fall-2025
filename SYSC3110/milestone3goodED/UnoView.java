@@ -176,6 +176,7 @@ public class UnoView extends JFrame implements Interface {
     }
 
     public void subscribe (GameManager gameManager) {
+
         this.gameManager = gameManager;
     }
 
