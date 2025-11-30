@@ -1,11 +1,6 @@
 import javax.swing.*;
-import javax.swing.border.LineBorder;
-import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The Controller class manages the state and flow of the GUI UNO game.
@@ -37,7 +32,7 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         gameManager.setView(view);
         gameManager.initializeControls();
         view.subscribe(gameManager);
-        gameManager.startgame();
+        gameManager.startGame();
 
         view.setVisible(true);
 
@@ -54,29 +49,6 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
     public UnoView getView() {
         return view;
     }
-
-    /**
-     * Plays the card the player selected after pressing the play button.
-     * Goes through different logic if it is a wild card as it requires user input for its color.
-     */
-    /*private void playCard() {
-
-        if (selectedCard == null) {
-            JOptionPane.showMessageDialog(null, "No card selected.");
-        } else {
-            Card card = currentPlayerHand.get((int) selectedCard.getClientProperty("index")); //get card from button hidden index
-
-            //wild requires input so controller has to take care of it
-            if (card.getType() == CardType.WILD || card.getType() == CardType.WILD_DRAW_TWO) {
-                handleWildCard(card);
-                currentPlayerHand.remove(card);
-            } else {
-                gameManager.playCard(card);
-                currentPlayerHand.remove(card); //remove card played from list, never implemented in game manager?
-            }
-        }
-
-    }*/
 
     /**
      * When cursor leaves area over card/JButton.
@@ -166,41 +138,45 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         if (button.getText().equals("Quit")) {
             System.exit(0);
 
-        } else if (button.getText().equals("Play")) {
-            System.out.println("play called");
+        } else if (button.getText().equals("Play")) { //play card
+            System.out.println("play called by: " + gameManager.getCurrentPlayer().getName() + " state: " + gameManager.getSeq());
             gameManager.playCard();
 
-            gameManager.updateView();
-
-        } else if (button.getText().equals("Draw")) {
-            System.out.println("draw called");
+        } else if (button.getText().equals("Draw")) { //draw card
+            System.out.println("draw called by: " + gameManager.getCurrentPlayer().getName() + " state: " + gameManager.getSeq());
             Player player = gameManager.getCurrentPlayer();
 
-            CardColour loopColour = gameManager.getDrawLoopColour();
-            if (gameManager.getWildDrawLoop()) {
-                Deck deck = gameManager.getDeck();
-                Card drawCard = deck.drawCard();
+            if (gameManager.getWildDrawLoop()) { //if player plays draw colour card
+                CardColour loopColour = gameManager.getDrawLoopColour(); //colour must draw
 
-                player.addCardtoHand(drawCard);
+                Deck deck = gameManager.getDeck(); //getting deck
+                Card drawCard = deck.drawCard(); //drawing card from deck
+
+                player.addCardtoHand(drawCard); //adding to player hand
                 if (drawCard.getColour() == loopColour) {
                     gameManager.setWildDrawLoop(false); //exit draw loop
                     gameManager.setPlayButton(true); //enable play card button
                     gameManager.setButtonBool(false); //disable draw button
+
+                    System.out.println("player drew colour");
                 } else {
                     JOptionPane.showMessageDialog(null, "Keep drawing");
                 }
 
+                gameManager.displayHand(); //update view?
+
             } else {
                 // Draw one card
                 gameManager.drawCard();
-                gameManager.setBool(true);
-                //gameManager.updatePlayerCards();
+                gameManager.setButtonBool(false); //disable draw for user after draw card
+                gameManager.handleAfterDraw(); //continues game logic after draw card
+
             }
 
 
 
-
-            gameManager.updateView();
+            System.out.println("updateView() called by: " + gameManager.getCurrentPlayer().getName() + " in Controller draw; state: " + gameManager.getSeq());
+            //gameManager.updateView();
         }
     }
 
