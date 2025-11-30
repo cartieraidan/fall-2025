@@ -1,0 +1,114 @@
+
+import javax.swing.*;
+import java.awt.*;
+
+public class UnoView extends JFrame implements Interface {
+
+    private JPanel playerCards;
+    private JPanel topPanel;
+
+    private JPanel leftPanel;
+    private JPanel rightPanel;
+    private JPanel centerPanel;
+
+    private JPanel player2;
+    private JPanel player3;
+    private JPanel player4;
+
+    GameManager gameManager;
+
+    public UnoView() {
+
+        setTitle("Uno");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(false);
+        setSize(1000, 800);
+
+
+        //only for testing purposes, will separate
+        playerCards = new JPanel();
+        playerCards.setBackground(Color.RED);
+        playerCards.setPreferredSize(new Dimension(800, 300));
+        playerCards.setLayout(null);
+
+        topPanel = new JPanel(new GridLayout(1, 2));
+        topPanel.setBackground(Color.lightGray);
+        topPanel.setPreferredSize(new Dimension(800, 200));
+
+        centerPanel = new JPanel(null);
+        centerPanel.setPreferredSize(new Dimension(400, 400));
+        add(centerPanel, BorderLayout.CENTER);
+
+        leftPanel = new JPanel();
+        rightPanel = new JPanel();
+
+        topPanel.add(leftPanel);
+        topPanel.add(rightPanel);
+
+        add(topPanel,  BorderLayout.NORTH);
+
+
+        player2 =  new JPanel();
+        player2.setBackground(Color.GREEN);
+        player2.setPreferredSize(new Dimension(800, 100));
+
+        player3 =  new JPanel();
+        player3.setBackground(Color.BLUE);
+        player3.setPreferredSize(new Dimension(100, 400));
+
+        player4 =  new JPanel();
+        player4.setBackground(Color.YELLOW);
+        player4.setPreferredSize(new Dimension(100, 400));
+
+
+    }
+
+    public void addCenterCard(JButton button) {
+        centerPanel.removeAll();
+        centerPanel.add(button);
+        revalidate();
+        repaint();
+    }
+
+    public void addPanel(JPanel panel, String layout) {
+        add(panel, layout);
+        //add(player2, BorderLayout.NORTH);
+        add(player3, BorderLayout.WEST);
+        add(player4, BorderLayout.EAST);
+        pack();
+    }
+
+    public JPanel getPlayerCards() {
+        return playerCards;
+    }
+
+    public JPanel getRightPanel() {
+        return rightPanel;
+    }
+
+    public void currentPlayerDisplay(String name) {
+        JLabel playerName = new JLabel("Player: " + name);
+        playerName.setFont(new Font("Arial", Font.BOLD, 14));
+        playerName.setForeground(Color.black);
+
+        leftPanel.removeAll(); //clear JLabel
+        leftPanel.add(playerName);
+
+        repaint();
+    }
+
+    public void addUpdateScore(int score) {
+        JLabel scoreLabel = new JLabel("Score: " + score);
+        scoreLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        scoreLabel.setForeground(Color.black);
+
+        leftPanel.add(scoreLabel);
+
+        repaint();
+    }
+
+    public void subscribe (GameManager gameManager) {
+        this.gameManager = gameManager;
+    }
+
+}
