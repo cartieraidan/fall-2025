@@ -1,0 +1,20 @@
+<addressBook>
+	<addressBookName>Friends</addressBookName>
+		<buddyInfos>
+			<buddyInfo>
+				<name>Alice</name>
+				<address>123 Main St</address>
+				<phoneNumber>555-1111</phoneNumber>
+			</buddyInfo>
+			<buddyInfo>
+				<name>Bob</name>
+				<address>456 Oak St</address>
+				<phoneNumber>555-2222</phoneNumber>
+			</buddyInfo>
+			<buddyInfo>
+				<name>auda</name>
+				<address>2 street</address>
+				<phoneNumber>222-222-2222</phoneNumber>
+			</buddyInfo>
+		</buddyInfos>
+</addressBook>
