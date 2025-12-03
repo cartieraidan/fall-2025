@@ -1,8 +1,10 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Stack;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -90,5 +92,48 @@ public class DeckTest {
         Stack<Card> cards = deck.getCards();
         assertNotNull(cards, "getCards() should never return null.");
         assertEquals(deck.size(), cards.size(), "Returned stack size should match deck size.");
+    }
+
+
+    @Test
+    void testGetFileIconLight() {
+        Deck deck = new Deck();
+
+        for (Card card : deck.getCards()) {
+            try {
+                String cardFileName = card.getFileName();
+                ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(cardFileName)));
+            } catch (Exception e) {
+                System.out.println("Error finding Icon for: " + card.getFileName());
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        assertTrue(true);
+
+
+    }
+
+    @Test
+    void testGetFileIconDark() {
+        Deck deck = new Deck();
+
+        for (Card card : deck.getCards()) {
+            card.flipCard();
+
+            try {
+                String cardFileName = card.getFileName();
+                ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(cardFileName)));
+            } catch (Exception e) {
+                System.out.println("Error finding Icon for: " + card.getFileName());
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        assertTrue(true);
+
+
     }
 }

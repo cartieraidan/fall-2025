@@ -605,6 +605,19 @@ public class GameManager {
         //create JButton emulating player hand
         JButton discard = new JButton(icon);
 
+        /*
+        //for layering icons instead of individual images for all cards
+        JButton discard = new JButton() {
+            @Override
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                icon1.paintIcon(this, g, 0, 0);
+                icon2.paintIcon(this, g, 0, 0);
+            }
+        };
+
+         */
+
         //discard.setEnabled(false);
         discard.setFocusPainted(false);
 
@@ -888,7 +901,7 @@ public class GameManager {
             //Get image icon for card
             ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(cardFileName)));
 
-            JButton buttonCard = new JButton(icon);
+            JButton buttonCard = new JButton(icon); //maybe add lambda for layering instead of individual files
 
             buttonCard.setBounds(
                     (i == 0) ? 50 : 50 + offset * i,
