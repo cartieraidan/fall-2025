@@ -137,4 +137,26 @@ public class Card {
             return colour + " " + type;
         }
     }
+
+    public String getFileName() {
+        CardType type = this.getType();
+        CardColour colour = this.getColour();
+        int value = this.getValue();
+
+        String fileName = "";
+
+        if (type == CardType.NUMBER){
+            fileName = colour + "-" + value + ".png";
+        }else{
+            fileName = colour + "-" + type + ".png";
+        }
+
+        if (side == CardSide.LIGHT) {
+            fileName = "/images/light/" + fileName;
+        } else {
+            fileName = "/images/dark/" + fileName;
+        }
+
+        return fileName;
+    }
 }

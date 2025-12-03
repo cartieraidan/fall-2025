@@ -32,6 +32,18 @@ public class Controller implements MouseListener, MouseMotionListener, ActionLis
         gameManager.setView(view);
         gameManager.initializeControls();
         view.subscribe(gameManager);
+
+        //testing
+        Deck deck = gameManager.getDeck();
+
+        for (Card card : deck.getCards()) {
+            card.flipCard();
+            System.out.println(card.getFileName());
+            card.flipCard();
+        }
+
+
+
         gameManager.startGame();
 
         view.setVisible(true);

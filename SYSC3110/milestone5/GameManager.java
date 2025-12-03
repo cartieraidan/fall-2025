@@ -189,7 +189,7 @@ public class GameManager {
                 p.drawCard(deck);
             }
         }
-        
+
 
     }
 
@@ -597,13 +597,19 @@ public class GameManager {
     private void updateDiscardPile() {
         Card topCard = topDiscard(); //get top card
 
+        //Gets the card png by getting file name from card
+        String cardFileName = topCard.getFileName();
+        //Get image icon for card
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(cardFileName)));
+
         //create JButton emulating player hand
-        JButton discard = new JButton();
-        discard.setEnabled(false);
+        JButton discard = new JButton(icon);
+
+        //discard.setEnabled(false);
         discard.setFocusPainted(false);
 
         //set style
-        setCardStyle(discard, topCard);
+        //setCardStyle(discard, topCard);
 
         discard.setBounds(
                 300,
@@ -877,7 +883,12 @@ public class GameManager {
 
         //main loop creates buttons and adds to JPanel
         for (int i = 0; i < getCurrentPlayer().gethand().size(); i++) {
-            JButton buttonCard = new JButton();
+            //Gets the card png by getting file name from card
+            String cardFileName = getCurrentPlayer().gethand().get(i).getFileName();
+            //Get image icon for card
+            ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(cardFileName)));
+
+            JButton buttonCard = new JButton(icon);
 
             buttonCard.setBounds(
                     (i == 0) ? 50 : 50 + offset * i,
@@ -893,7 +904,7 @@ public class GameManager {
             view.addButtonCard(buttonCard);
 
             //setting style of card/JButton
-            setCardStyle(buttonCard, getCurrentPlayer().gethand().get(i));
+            //setCardStyle(buttonCard, getCurrentPlayer().gethand().get(i));
 
             playerCards.add(buttonCard); //add to JPanel
             playerCards.setComponentZOrder(buttonCard, i); //set z layer order by index
