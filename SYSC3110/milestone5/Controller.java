@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * Controller most of the game flow from interactions with the GUI and handle the logic to handle.
  *
  *
- * @author Aidan Cartier
+ *
  * @version November 10, 2025
  */
 public class Controller implements MouseListener, MouseMotionListener, ActionListener {

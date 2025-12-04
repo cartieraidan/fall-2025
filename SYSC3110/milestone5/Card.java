@@ -3,7 +3,7 @@
  * A card has a colour, a type, and if it is a number card, a value.
  * Cards can be compared to other cards to determine if they can be legally played.
  *
- * @author Mark Bowerman
+ *
  * @version 1.0
  */
 public class Card {
@@ -138,6 +138,11 @@ public class Card {
         }
     }
 
+    /**
+     * Get png filename of card.
+     *
+     * @return String of file name with full path
+     */
     public String getFileName() {
         CardType type = this.getType();
         CardColour colour = this.getColour();

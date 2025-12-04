@@ -7,7 +7,7 @@ import java.util.Stack;
  * Class represents a standard UNO deck used in the game.
  * It manages card creation, shuffling, drawing and general deck operations.
  *
- * @author Joshua Heinze
+ *
  * @version 1.0
  */
 public class Deck {
